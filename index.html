@@ -218,12 +218,13 @@ footer strong{color:var(--red)}
 </div>
 <div class="subtitle">SALE FORECAST<br>WEATHER OBSERVATORY<br>v0.9</div>
 </div>
-<p class="tagline">お得情報を「雨〜虹」の天気予報メタファーで予報。通常版・楽器版・家具版から選んで、必要な情報を一目で確認できます。</p>
+<p class="tagline">お得情報を「雨〜虹」の天気予報メタファーで予報。通常版・楽器版・家具版・コスメ版から選んで、必要な情報を一目で確認できます。</p>
 </header>
 <div class="version-selector" id="versionSelector">
 <button class="ver-tab active" data-version="general">🏬 通常版</button>
 <button class="ver-tab" data-version="instrument">🎸 楽器版</button>
 <button class="ver-tab" data-version="furniture">🛋️ 家具版</button>
+<button class="ver-tab" data-version="cosmetics">💄 コスメ版</button>
 </div>
 <div class="mode-tabs">
 <button class="mode-tab active" data-mode="normal"><span class="tab-num">01</span>通常モード</button>
@@ -308,7 +309,20 @@ const PREFECTURE_TO_REGION={};Object.entries(PREFECTURES).forEach(([r,ps])=>ps.f
 const REGION_LABEL={hokkaido:'北海道',tohoku:'東北',kanto:'関東',chubu:'中部・東海',kansai:'関西',chugoku:'中国',shikoku:'四国',kyushu:'九州・沖縄'};
 const TYPE_LABEL={discount:'割引',points:'ポイント倍増',payback:'ペイバック',clearance:'クリアランス',member:'カード会員限定'};
 const WEATHER={rain:{icon:'☂',label:'雨'},cloud:{icon:'☁',label:'曇り'},sun:{icon:'☀',label:'晴れ'},rainbow:{icon:'🌈',label:'虹'}};
-function valueToWeather(s){if(s>=75)return'rainbow';if(s>=50)return'sun';if(s>=25)return'cloud';return'rain'}
+function valueToWeather(s,version){
+  /* コスメ版は値引きが抑えられる業界のため独自の閾値 */
+  if(version==='cosmetics'){
+    if(s>=70)return'rainbow';
+    if(s>=50)return'sun';
+    if(s>=30)return'cloud';
+    return'rain';
+  }
+  /* 通常版・楽器版・家具版 */
+  if(s>=75)return'rainbow';
+  if(s>=50)return'sun';
+  if(s>=25)return'cloud';
+  return'rain';
+}
 const ALL_PREFS=Object.values(PREFECTURES).flat();
 const K=PREFECTURES.kanto,T=PREFECTURES.tohoku,KS=PREFECTURES.kansai;
 
@@ -346,7 +360,14 @@ ikebe_club:{name:'イケベミュージッククラブ',issuer:'イケベ楽器'
 yamano_point:{name:'ヤマノミュージックポイント',issuer:'山野楽器',baseRate:'1%',annualFee:'無料',primaryUse:'山野楽器',keyBenefits:['CD/DVD/楽譜/書籍で1%','100ptで100円のお買物券'],notes:'楽器本体は対象外の場合あり。'},
 mitsui_card:{name:'三井ショッピングパークカード《セゾン》',issuer:'三井不動産/セゾン',baseRate:'0.5%',annualFee:'無料',primaryUse:'ららぽーと・三井OUT・エキスポシティ',keyBenefits:['通常2%、特別ポイントアップ時2-3倍','年4回程度のカード会員ポイントアップ','アプリde支払い対応'],notes:'楽器店・家具店がテナント出店時、SC全体のキャンペーンが効く。'},
 nitori_app:{name:'ニトリアプリ会員',issuer:'ニトリ',baseRate:'約1%',annualFee:'無料',primaryUse:'ニトリ・デコホーム・島忠ホームズ',keyBenefits:['ポイント2倍 (通常の)','入会14日以内3,000円購入で500pt','春のポイント還元最大7,700pt','創業祭時は大型家具1.5倍'],notes:'楽天市場店との二重取りも可能。'},
-ikea_family:{name:'IKEA Family',issuer:'IKEA',baseRate:'-',annualFee:'無料',primaryUse:'IKEA',keyBenefits:['メンバー限定価格','先行セール','誕生月クーポン','オープン1時間ドリンクバー無料 (一部除く)'],notes:'年1回以上来店なら必須。'}
+ikea_family:{name:'IKEA Family',issuer:'IKEA',baseRate:'-',annualFee:'無料',primaryUse:'IKEA',keyBenefits:['メンバー限定価格','先行セール','誕生月クーポン','オープン1時間ドリンクバー無料 (一部除く)'],notes:'年1回以上来店なら必須。'},
+cosme_member:{name:'@cosmeメンバー (ビューティポイント)',issuer:'アイスタイル',baseRate:'1%',annualFee:'無料',primaryUse:'@cosme SHOPPING / STORE',keyBenefits:['通常1%、月初1〜4日は10%還元','BEAUTY DAY(12月)は最大30%還元','スペシャルウィーク(6月)で最大30%','会員ランクで1〜5%還元'],notes:'プレミアム会員(月額367-509円)になるとさらに+2%、シークレットセール参加可。'},
+cosme_premium:{name:'@cosmeプレミアム (お買い物コース)',issuer:'アイスタイル',baseRate:'3%',annualFee:'月額509円',primaryUse:'@cosme SHOPPING / STORE',keyBenefits:['ポイント還元率3%','毎月500円分クーポン×2 (SHOPPING/STORE)','会員限定シークレットセール (月1回・最大20%OFFまたはポイント30倍)','プレミアム機能・限定情報配信'],notes:'月3,000円以上買えば年会費分を回収可能。'},
+matsukiyo_app:{name:'マツキヨココカラポイント',issuer:'マツキヨココカラ&カンパニー',baseRate:'1%',annualFee:'無料',primaryUse:'マツモトキヨシ・ココカラファイン',keyBenefits:['100円(税抜)=1ポイント','月間1万円超で翌月2倍、2万円超で翌月3倍','dポイント・楽天ポイントとの二重取り可','期間限定ポイント・クーポン配信'],notes:'dカード併用でdポイント+マツキヨポイント合計4%還元可能。'},
+welcia_waon:{name:'WAON POINT (ウエル活)',issuer:'イオン/ウエルシア',baseRate:'1%',annualFee:'無料',primaryUse:'ウエルシア・ハックドラッグ',keyBenefits:['毎月20日「お客様感謝デー」: 200pt以上で1.5倍利用 (実質33%OFF)','月曜日は2倍デー','シニアズデー(15日・55歳以上)','イオン系全店で利用可'],notes:'2024年9月以降、20日感謝デーはWAON POINT専用に。ポイ活で大量にWAONポイントを集めて毎月20日に放出するのが「ウエル活」。'},
+sugi_app:{name:'スギ薬局アプリ会員',issuer:'スギ薬局',baseRate:'1%',annualFee:'無料',primaryUse:'スギ薬局',keyBenefits:['100円(税込)=1ポイント','景品交換用 (支払い充当不可)','景品交換時お得度UPキャンペーン (不定期)','アプリクーポン配信'],notes:'貯めたポイントは賞品との交換専用。'},
+tsuruha_app:{name:'ツルハポイント',issuer:'ツルハグループ',baseRate:'1%',annualFee:'無料',primaryUse:'ツルハ・くすりの福太郎・ウォンツ',keyBenefits:['毎月1・10・20日「お客様感謝デー」: 提示で5%引','楽天ポイント二重取り','処方箋ポイント加算可','楽天ポイントカード併用可'],notes:'2024年経営統合でウエルシアグループと連携、将来的にWAON/Vポイントとの統合可能性あり。'},
+sundrug_app:{name:'サンドラッグポイント',issuer:'サンドラッグ',baseRate:'0.5-1%',annualFee:'無料',primaryUse:'サンドラッグ',keyBenefits:['100円(税抜)=1ポイント','楽天ポイント二重取り','店舗別の3倍デー・5倍デー','LINEクーポン・スマートニュースクーポン併用可'],notes:'サンドラッグ独自のクーポン配信が豊富。'}
 };
 
 /* ===== 通常版 EVENTS ===== */
@@ -488,6 +509,51 @@ const FURNITURE_EVENTS=[
 {id:'fu20',group:'ec',subgroup:'Amazon',name:'Amazon 家具・インテリア',event:'新生活セール・プライムデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[3,7,11],valueScore:65,detail:'新生活セール (3月)、プライムデー (7月)、BF (11月) で家具が値下げ。',trend:'2026年新生活SALEは3/3-3/9。',cardTypes:['amazon_card'],prefectures:'all'},
 ];
 
+/* ===== コスメ版 EVENTS ===== */
+const COSMETICS_EVENTS=[
+/* @cosme系 */
+{id:'co1',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'BEAUTY DAY',type:'points',headline:'最大30%',headlineUnit:'還元',months:[12],valueScore:90,detail:'年に一度・3日間の大規模セール。最大30%ポイントバック・BEAUTY DAY限定アイテム・3,000円以上送料無料・18,000円以上でサンプルセット。',trend:'2023年12/1-12/3、2024年12月上旬実績。例年12月第1週の3日間に開催。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
+{id:'co2',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'SPECIAL WEEK (6月)',type:'points',headline:'最大30%',headlineUnit:'還元',months:[6],valueScore:80,detail:'年に一度、6月頃に7日間限定で開催。対象ブランドが最大30%ポイントバック・数量限定スペシャルアイテム・サンプルプレゼント。',trend:'毎年6月の恒例イベント。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
+{id:'co3',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'初売りセール',type:'points',headline:'10%',headlineUnit:'還元',months:[1],valueScore:65,detail:'1月初〜中旬の初売りセール。ニューイヤースペシャルセット・シークレットサンプル・10%ポイントバック。',trend:'2026年は1/1〜1/12開催。10%ポイントバックは1/9〜1/12。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
+{id:'co4',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'月初ポイント10倍',type:'points',headline:'10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,alwaysOn:true,detail:'毎月1〜4日に全品10%ポイントバック (通常1%の10倍)。月によっては最大20%まで上昇。',trend:'長期間継続している月例施策。',cardTypes:['cosme_member'],prefectures:'all'},
+{id:'co5',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'@cosme SHOPPING PARTY (3ヶ月毎)',type:'points',headline:'送料無料',headlineUnit:'+特典',months:[3,6,9,12],valueScore:45,detail:'3・6・9・12月に開催。期間中は1,500円以上で送料無料 (通常3,900円)、対象商品購入でサンプル・ノベルティプレゼント。',trend:'3ヶ月に1回・年4回の定例。',cardTypes:['cosme_member'],prefectures:'all'},
+{id:'co6',group:'cos_ec',subgroup:'@cosme',name:'@cosme プレミアムサービス',event:'お買い物コース シークレットセール',type:'points',headline:'最大30',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:55,alwaysOn:true,detail:'お買い物コース会員 (月額509円) 限定で、対象商品が最大30倍ポイントまたは最大20%OFF。毎月開催。',trend:'通年実施。',cardTypes:['cosme_premium'],prefectures:'all'},
+{id:'co7',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'HAPPY FRIDAY',type:'points',headline:'週次',headlineUnit:'更新',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'毎週金曜更新のセール・キャンペーン。先行予約・数量限定・購入特典・ポイントバックなど。',trend:'通年・毎週更新。',cardTypes:['cosme_member'],prefectures:'all'},
+
+/* ドラッグストア */
+{id:'co8',group:'cos_drug',subgroup:'マツキヨココカラ',name:'マツモトキヨシ・ココカラファイン',event:'通年マツキヨココカラポイント',type:'points',headline:'1-3%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'100円(税抜)=1ポイント。月間1万円超で翌月2倍、2万円超で翌月3倍にステージアップ。dポイント/楽天ポイントとの二重取り可。',trend:'通年。',synergy:'dカード払いで「dポイント1%+マツキヨポイント1%+dカード還元1%=合計3%」の三重取り。dカード特約店なので特に有利。',cardTypes:['matsukiyo_app','dcard'],prefectures:'all'},
+{id:'co9',group:'cos_drug',subgroup:'マツキヨココカラ',name:'マツモトキヨシ・ココカラファイン',event:'ビューティ ハッピーデー',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:55,detail:'コスメ・ビューティアイテム対象のポイント倍デー。アプリクーポンと併用で最大10倍。',trend:'季節の変わり目に四半期ごとの開催傾向。',cardTypes:['matsukiyo_app'],prefectures:'all'},
+{id:'co10',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'お客様感謝デー (毎月20日)',type:'payback',headline:'1.5',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:75,alwaysOn:true,detail:'毎月20日にWAON POINTを200pt以上使うと1.5倍で買い物可能 (実質33%OFF)。月最大30,000ptで45,000円分のお会計可能。「ウエル活」の名で広く知られる。',trend:'2024年9月以降WAON POINT専用に。タバコ・調剤等を除き店内ほぼ全品が対象。',synergy:'ポイ活サイトでWAON POINTを大量に集めて、20日に化粧品・日用品をまとめ買いするのがコスメ最強の節約術。',cardTypes:['welcia_waon','aeon_card'],prefectures:'all'},
+{id:'co11',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'月曜2倍デー',type:'points',headline:'2',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'毎週月曜日はWAON POINTが2倍。',trend:'通年。',cardTypes:['welcia_waon','aeon_card'],prefectures:'all'},
+{id:'co12',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'シニアズデー (毎月15日)',type:'points',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'55歳以上対象。毎月15日に5%OFFまたはポイント加算。',trend:'通年。',cardTypes:['welcia_waon'],prefectures:'all'},
+{id:'co13',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'カウンセリング化粧品10倍デー',type:'points',headline:'10',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,detail:'カウンセリング化粧品 (ファンケル・オルビス・カネボウ・コーセー等のブランド品) 対象。WAON POINT 10倍。',trend:'店舗別に月数回開催。',cardTypes:['welcia_waon'],prefectures:'all'},
+{id:'co14',group:'cos_drug',subgroup:'ツルハ',name:'ツルハドラッグ・くすりの福太郎',event:'お客様感謝デー (1・10・20日)',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:45,alwaysOn:true,detail:'毎月1・10・20日にツルハポイントカード提示で5%引。月3回のお得日。',trend:'通年・長年継続。',synergy:'楽天ポイント二重取り併用で楽天カードユーザーは実質6%還元相当。',cardTypes:['tsuruha_app','rakuten'],prefectures:'all'},
+{id:'co15',group:'cos_drug',subgroup:'スギ薬局',name:'スギ薬局',event:'景品交換アップキャンペーン',type:'points',headline:'交換',headlineUnit:'アップ',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'スギポイントは賞品交換専用 (支払い充当不可)。景品交換時のお得度アップキャンペーンが不定期実施。',trend:'不定期開催。',cardTypes:['sugi_app'],prefectures:'all'},
+{id:'co16',group:'cos_drug',subgroup:'サンドラッグ',name:'サンドラッグ',event:'店舗別ポイント倍デー',type:'points',headline:'3-5',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,detail:'店舗ごとに3倍・5倍デーを定期開催。楽天ポイント二重取り併用可。LINEクーポン・スマートニュースクーポン併用可。',trend:'通年・店舗別に異なる頻度で開催。',cardTypes:['sundrug_app','rakuten'],prefectures:'all'},
+
+/* 百貨店コスメ */
+{id:'co17',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY (伊勢丹新宿・三越本店等)',event:'ビューティ新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[11,12,1],valueScore:80,detail:'11月中旬〜予約開始、1/1〜順次お届け。デパコス各ブランドの限定キット・ホリデーコフレ・スペシャルセット。',trend:'2026年は11/12新春福袋スタート。',synergy:'エムアイカード払いで5-10%還元 (年間積算)。プラチナは常時10%。',cardTypes:['mi_card','iwataya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'co18',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY',event:'ホリデーコフレ予約',type:'member',headline:'予約',headlineUnit:'限定',months:[10,11],valueScore:70,detail:'各ブランドのホリデーコフレ・クリスマスコフレを伊勢丹オンラインから先行予約可。シスレー・SHISEIDO・ジルスチュアート等。',trend:'例年10月下旬〜11月上旬に予約スタート。',cardTypes:['mi_card','iwataya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'co19',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY',event:'メンバーズ感謝祭・招待会連動',type:'member',headline:'会員',headlineUnit:'特典',months:[2,3,8,9],valueScore:55,detail:'三越伊勢丹の年2回 (春・秋) の招待会・感謝祭にコスメフロアも参加。エムアイカード会員は特別優待・ノベルティ・先行販売。',trend:'8-9月感謝祭・2-3月招待会と連動。',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'co20',group:'cos_depart',subgroup:'阪急阪神',name:'HANKYU BEAUTY ONLINE (阪急うめだ等)',event:'ネットポイント最大30倍',type:'points',headline:'最大30',headlineUnit:'倍',months:[3,5,9,11],valueScore:65,detail:'HANKYU BEAUTY ONLINEでネットポイント最大30倍・送料無料 (一部除外)。デパコスをお得にゲット。',trend:'年4回程度開催。',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'co21',group:'cos_depart',subgroup:'阪急阪神',name:'阪急BEAUTY (阪急うめだ本店等)',event:'阪急BEAUTY新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[11,12,1],valueScore:80,detail:'11月中旬予約開始、約50ブランドの福袋。アユーラ・クラランス・クリニーク・SABON・ジバンシイ・シュウウエムラ・ボビイブラウン等。',trend:'2026年は11/12 18時/20時から予約開始。',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'co22',group:'cos_depart',subgroup:'高島屋',name:'高島屋ビューティ',event:'ホリデーコフレ・新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[10,11,12,1],valueScore:75,detail:'10-11月ホリデーコフレ予約、12月末〜1月福袋。タカシマヤカードで5-10%還元と併用。',trend:'例年10月下旬予約スタート。',cardTypes:['takashimaya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','大阪府','京都府','愛知県','岡山県']},
+{id:'co23',group:'cos_depart',subgroup:'大丸松坂屋',name:'大丸・松坂屋 ビューティ',event:'ホリデーコフレ・新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[10,11,12,1],valueScore:75,detail:'大丸東京・梅田・心斎橋・神戸・松坂屋名古屋等のコスメフロアでホリデーコフレ予約と新春福袋。',trend:'例年10月下旬〜11月上旬予約開始。',cardTypes:['daimaru'],prefectures:['東京都','神奈川県','大阪府','兵庫県','愛知県','京都府','福岡県','高知県','山口県']},
+
+/* ブランド独自 */
+{id:'co24',group:'cos_brand',subgroup:'SHISEIDO',name:'SHISEIDO公式オンライン',event:'ホリデーコレクション',type:'discount',headline:'限定',headlineUnit:'キット',months:[10,11,12],valueScore:55,detail:'数量限定ホリデーキット・アドベントカレンダー販売。会員限定先行販売あり。',trend:'例年10月下旬発売。',cardTypes:[],prefectures:'all'},
+{id:'co25',group:'cos_brand',subgroup:'ORBIS',name:'オルビス公式',event:'ORBIS APP メンバー特典',type:'points',headline:'1-10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'会員ランク別1-10%ポイント還元。誕生月特典・トライアルキット・ノベルティ。',trend:'通年・会員ランク制。',cardTypes:[],prefectures:'all'},
+{id:'co26',group:'cos_brand',subgroup:'FANCL',name:'ファンケル公式',event:'感謝デー (毎月10日)',type:'points',headline:'2-3',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'毎月10日はファンケル感謝デー。ポイント2-3倍・送料無料。',trend:'長年継続の通年施策。',cardTypes:[],prefectures:'all'},
+{id:'co27',group:'cos_brand',subgroup:'横断',name:'コスメブランド各社',event:'春の新作リニューアル発売',type:'discount',headline:'新作',headlineUnit:'発売',months:[2,3],valueScore:50,detail:'春のシーズン (2-3月) は各ブランドが新作・リニューアル品を一斉発売。先行サンプル・予約特典が手厚い時期。',trend:'毎年2-3月、9月に新作集中投入の傾向。',cardTypes:[],prefectures:'all'},
+{id:'co28',group:'cos_brand',subgroup:'横断',name:'コスメブランド各社',event:'秋の新作リニューアル発売',type:'discount',headline:'新作',headlineUnit:'発売',months:[8,9],valueScore:50,detail:'秋シーズン (8-9月) の新作・リニューアル品。スキンケア・アイメイクの強化シーズン。',trend:'毎年8-9月。',cardTypes:[],prefectures:'all'},
+
+/* EC他 */
+{id:'co29',group:'ec',subgroup:'楽天',name:'楽天市場 (コスメカテゴリ)',event:'楽天お買い物マラソン コスメ',type:'points',headline:'最大10',headlineUnit:'倍',months:[1,2,4,5,7,8,10,11],valueScore:55,detail:'@cosme SHOPPING楽天市場店・各ブランド楽天市場店・ドラッグストア楽天市場店が対象。買い回りで最大10倍。',trend:'毎月1〜3回。',synergy:'楽天カード+SPU+5と0のつく日と組み合わせて買い回りすれば、ポイント還元率15%超も可能。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'co30',group:'ec',subgroup:'Amazon',name:'Amazon ビューティ',event:'プライムデー・BF (ビューティ)',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[3,7,10,11],valueScore:60,detail:'新生活セール (3月)、プライムデー (7月)、プライム感謝祭 (10月)、BF (11月) でビューティ製品が値下げ・ポイント還元アップ。',trend:'2026年BFは11月後半。',cardTypes:['amazon_card'],prefectures:'all'},
+{id:'co31',group:'ec',subgroup:'Qoo10',name:'Qoo10 メガ割',event:'メガ割 (コスメ)',type:'discount',headline:'20%',headlineUnit:'OFF',months:[3,6,9,11],valueScore:70,detail:'年4回開催のQoo10メガ割は韓国コスメ・プチプラの最強セール。20%OFFクーポン+ショップ独自還元で実質30-40%OFFも。',trend:'2024-2025年は3月・6月・9月・11月の年4回・各回約2週間。',cardTypes:[],prefectures:'all'},
+{id:'co32',group:'ec',subgroup:'LIPS',name:'LIPSショッピング',event:'季節キャンペーン',type:'points',headline:'最大15%',headlineUnit:'還元',months:[3,6,9,12],valueScore:50,detail:'コスメ口コミアプリLIPS内のショッピング機能。季節ごとのポイントアップキャンペーン。',trend:'四半期ごと開催。',cardTypes:[],prefectures:'all'},
+];
+
 /* ===== 版別設定 ===== */
 const VERSION_DATA = {
   general: { events: GENERAL_EVENTS, label: '通常版',
@@ -538,6 +604,24 @@ const VERSION_DATA = {
     wizardRetailers: [
       {val:'fur_shop',label:'家具店',sub:'ニトリ・IKEA・大塚家具・マナベ'},
       {val:'ec',label:'EC',sub:'楽天家具店・Amazon'},
+    ]
+  },
+  cosmetics: { events: COSMETICS_EVENTS, label: 'コスメ版',
+    groupOrder: ['cos_ec','cos_drug','cos_depart','cos_brand','ec'],
+    groupLabels: {cos_ec:'コスメEC',cos_drug:'ドラッグストア',cos_depart:'百貨店コスメ',cos_brand:'ブランド公式',ec:'総合EC',all:'横断'},
+    filterOptions: [
+      {val:'cos_ec',label:'@cosme・コスメEC'},
+      {val:'cos_drug',label:'ドラッグストア (マツキヨ・ウエルシア等)'},
+      {val:'cos_depart',label:'百貨店コスメフロア'},
+      {val:'cos_brand',label:'ブランド公式 (SHISEIDO・ORBIS等)'},
+      {val:'ec',label:'総合EC (楽天・Amazon・Qoo10)'},
+    ],
+    wizardRetailers: [
+      {val:'cos_ec',label:'@cosme・コスメEC',sub:'@cosme SHOPPING・LIPS等'},
+      {val:'cos_drug',label:'ドラッグストア',sub:'マツキヨ・ウエルシア・ツルハ等'},
+      {val:'cos_depart',label:'百貨店コスメ',sub:'伊勢丹・阪急・高島屋等'},
+      {val:'cos_brand',label:'ブランド公式',sub:'SHISEIDO・ORBIS・FANCL等'},
+      {val:'ec',label:'総合EC',sub:'楽天・Amazon・Qoo10'},
     ]
   }
 };
@@ -635,7 +719,7 @@ function renderIntensityMap(){
     for(let m=1;m<=12;m++){
       const evs=filtered.filter(ev=>(ev.group===g||ev.group==='all')&&ev.months.includes(m));
       const max=evs.reduce((a,b)=>Math.max(a,b.valueScore||0),0);
-      const w=valueToWeather(max);
+      const w=valueToWeather(max,currentVersion);
       const cur=m===cm?' current':'';
       const wd=WEATHER[w];
       const lbl=max>0?`<span class="w-icon">${wd.icon}</span><span class="w-label">${wd.label}</span>`:'<span class="w-icon" style="opacity:.3">·</span>';
