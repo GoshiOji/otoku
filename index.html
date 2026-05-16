@@ -26,10 +26,10 @@ html,body{background:var(--paper)!important;color:var(--ink)!important}
 .modal-section-content{color:var(--ink)!important}
 select,input{color:var(--ink)!important;background-color:var(--paper)!important}
 button.secondary{color:var(--ink)!important;background-color:transparent!important}
-button:not(.secondary):not(.banner-btn):not(.mode-tab):not(.modal-close):not(.wizard-option):not(.ver-tab){color:var(--paper)!important;background-color:var(--ink)!important}
+button:not(.secondary):not(.banner-btn):not(.mode-tab):not(.modal-close):not(.wizard-option){color:var(--paper)!important;background-color:var(--ink)!important}
 .banner-btn{color:var(--paper)!important;background-color:var(--purple)!important}
-.mode-tab.active,.ver-tab.active{color:var(--paper)!important;background-color:var(--ink)!important}
-.mode-tab:not(.active),.ver-tab:not(.active){color:var(--ink-soft)!important;background-color:var(--paper-dark)!important}
+.mode-tab.active{color:var(--paper)!important;background-color:var(--ink)!important}
+.mode-tab:not(.active){color:var(--ink-soft)!important;background-color:var(--paper-dark)!important}
 .modal-header,.modal-header h3{color:var(--paper)!important}
 .recommend-header,.recommend-header h3{color:var(--paper)!important}
 .recommend-header .summary{color:rgba(244,238,226,.85)!important}
@@ -45,10 +45,22 @@ header{border-top:3px double var(--ink);border-bottom:1px solid var(--ink);paddi
 .meta-strip{display:flex;gap:14px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);flex-wrap:wrap}
 .meta-strip span::before{content:'◆ ';color:var(--red)}
 .tagline{font-family:'Shippori Mincho',serif;font-size:13px;line-height:1.7;color:var(--ink-soft);margin-top:12px;max-width:760px}
-.version-selector{display:flex;gap:6px;margin-bottom:14px;padding:5px;background:var(--paper-dark);border:1px solid var(--ink);flex-wrap:wrap}
-.ver-tab{flex:1;min-width:100px;padding:10px 12px;background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Shippori Mincho',serif;font-weight:700;font-size:14px;color:var(--ink-soft);transition:all .15s;text-align:center}
-.ver-tab:hover{background:rgba(255,255,255,.5);color:var(--ink)}
-.ver-tab.active{background:var(--ink);color:var(--paper);box-shadow:2px 2px 0 var(--gold)}
+.tagline-block{margin-top:14px;max-width:760px}
+.tagline-block .tagline{font-family:'Shippori Mincho',serif;font-size:13px;line-height:1.7;color:var(--ink-soft);margin-top:0}
+.tagline-list{list-style:none;padding:12px 16px;margin-top:10px;background:rgba(255,255,255,.5);border-left:3px solid var(--gold);font-size:12px;line-height:1.9;color:var(--ink)}
+.tagline-list li{padding-left:0}
+.tagline-list li strong{color:var(--red-deep);margin-right:6px}
+.cos-type-filter{display:none;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:rgba(184,137,59,.08);border:1px solid var(--gold);flex-wrap:wrap}
+.cos-type-filter.visible{display:flex}
+.cos-type-filter-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.1em}
+.cos-type-filter-label::before{content:'💄 '}
+.cos-type-btn{padding:6px 14px;background:var(--paper);border:1px solid var(--line);font-family:'Shippori Mincho',serif;font-weight:700;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .15s}
+.cos-type-btn:hover{background:#fff;border-color:var(--ink);color:var(--ink)}
+.cos-type-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);box-shadow:2px 2px 0 var(--gold)}
+.version-selector{display:flex;gap:12px;align-items:center;margin-bottom:14px;padding:12px 14px;background:var(--paper-dark);border:1px solid var(--ink);flex-wrap:wrap}
+.version-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--ink);font-weight:700;flex-shrink:0}
+#versionSelect{flex:1;min-width:200px;max-width:340px;padding:11px 14px;background:var(--paper);border:1.5px solid var(--ink);font-family:'Shippori Mincho',serif;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer;height:46px;line-height:1.2;letter-spacing:.04em}
+#versionSelect:focus{outline:none;background:#fff;box-shadow:3px 3px 0 var(--gold)}
 .mode-tabs{display:flex;margin-bottom:20px;border-bottom:2px solid var(--ink)}
 .mode-tab{flex:1;max-width:280px;padding:11px 16px;background:var(--paper-dark);border:1px solid var(--ink);border-bottom:none;cursor:pointer;font-family:'Shippori Mincho',serif;font-weight:700;font-size:14px;color:var(--ink-soft);transition:all .15s;text-align:center}
 .mode-tab:hover{background:var(--paper)}
@@ -82,6 +94,8 @@ button.secondary:hover{background:var(--ink);color:var(--paper)}
 .wizard-step-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);font-weight:700;margin-bottom:6px}
 .wizard-question{font-family:'Shippori Mincho',serif;font-size:20px;font-weight:700;margin-bottom:5px}
 .wizard-hint{font-size:12px;color:var(--ink-soft);margin-bottom:20px;line-height:1.6}
+.wizard-subheading{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink);font-weight:700;letter-spacing:.1em;margin:8px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
+.wizard-subheading:not(:first-child){margin-top:18px}
 .wizard-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:22px}
 .wizard-option{padding:14px 16px;border:1px solid var(--line);background:var(--paper);cursor:pointer;text-align:left;font-size:14px;display:flex;align-items:center;gap:10px;color:var(--ink);min-height:60px;line-height:1.4}
 .wizard-option:hover{background:#fff;border-color:var(--ink)}
@@ -198,7 +212,7 @@ footer strong{color:var(--red)}
 .imap-row-label{padding-left:5px;font-size:10px}
 .brand{font-size:30px}
 .container{padding:22px 12px 50px}
-.mode-tab,.ver-tab{font-size:12px;padding:9px 6px}
+.mode-tab{font-size:12px;padding:9px 6px}
 .wizard{padding:22px 16px}
 .wizard-question{font-size:17px}
 }
@@ -218,13 +232,24 @@ footer strong{color:var(--red)}
 </div>
 <div class="subtitle">SALE FORECAST<br>WEATHER OBSERVATORY<br>v0.9</div>
 </div>
-<p class="tagline">お得情報を「雨〜虹」の天気予報メタファーで予報。通常版・楽器版・家具版・コスメ版から選んで、必要な情報を一目で確認できます。</p>
+<div class="tagline-block">
+<p class="tagline">お得情報を「雨〜虹」の天気予報メタファーで予報。お住まい・支払い方法・興味のあるジャンルに合わせて、版を切り替えてご利用ください。</p>
+<ul class="tagline-list">
+<li><strong>🏬 通常版</strong>: 百貨店・SC・駅ビル・家電量販店・EC・カード会社独自販促を網羅</li>
+<li><strong>💄 コスメ版</strong>: @cosme・ドラッグストア (ウエル活含む)・百貨店コスメ・ホリデーコフレを横断</li>
+<li><strong>🛋️ 家具版</strong>: ニトリ・IKEA・大塚家具・マナベ等の決算/周年/新生活セール</li>
+<li><strong>🎸 楽器版</strong>: 島村・イシバシ・サウンドハウス等の決算/BFセール+SC連動相乗効果</li>
+</ul>
+</div>
 </header>
 <div class="version-selector" id="versionSelector">
-<button class="ver-tab active" data-version="general">🏬 通常版</button>
-<button class="ver-tab" data-version="instrument">🎸 楽器版</button>
-<button class="ver-tab" data-version="furniture">🛋️ 家具版</button>
-<button class="ver-tab" data-version="cosmetics">💄 コスメ版</button>
+<label class="version-label">📰 版を選択</label>
+<select id="versionSelect">
+<option value="general">🏬 通常版</option>
+<option value="cosmetics">💄 コスメ版</option>
+<option value="furniture">🛋️ 家具版</option>
+<option value="instrument">🎸 楽器版</option>
+</select>
 </div>
 <div class="mode-tabs">
 <button class="mode-tab active" data-mode="normal"><span class="tab-num">01</span>通常モード</button>
@@ -254,14 +279,34 @@ footer strong{color:var(--red)}
 <span class="legend-item">※ 虹の月は最大級のお買い得機会</span>
 </div>
 <div class="forecast-intro"><h2><span class="num">02</span>予報詳細</h2><span class="stamp">DETAILED · <span id="cardCount">0</span> 件</span></div>
+<div class="cos-type-filter" id="cosTypeFilter">
+<span class="cos-type-filter-label">タイプ絞り込み</span>
+<button class="cos-type-btn active" data-cos="all">すべて</button>
+<button class="cos-type-btn" data-cos="counseling">デパコス</button>
+<button class="cos-type-btn" data-cos="drugstore">プチプラ</button>
+</div>
 <div class="sort-bar"><label>並び替え:</label><select id="sortBy"><option value="date_asc">時期が近い順</option><option value="date_desc">時期が遠い順</option><option value="value_desc">お得度が高い順</option><option value="value_asc">お得度が低い順</option><option value="retailer">店舗グループ別</option></select></div>
 <div class="forecast-list" id="forecastList"></div>
 </div>
 <div class="mode-content" id="mode-recommend">
 <div class="wizard" id="wizardPanel">
 <div class="wizard-progress" id="wizardProgress"></div>
-<div class="wizard-step active" data-step="0"><div class="wizard-step-num">QUESTION 01 / 06</div><div class="wizard-question">よく使う支払い方法は？</div><div class="wizard-hint">お持ちのクレジットカードや使うコード決済を選んでください (複数選択可)</div><div class="wizard-options" data-key="cards" data-multi="true"></div></div>
-<div class="wizard-step" data-step="1"><div class="wizard-step-num">QUESTION 02 / 06</div><div class="wizard-question">お住まいはどの地方ですか？</div><div class="wizard-hint">該当する地方を一つ選択。「全国」を選ぶとEC・全国チェーンが優先されます。</div><div class="wizard-options" data-key="region" data-multi="false">
+<div class="wizard-step active" data-step="0">
+<div class="wizard-step-num">QUESTION 01 / 07</div>
+<div class="wizard-question">よく使う支払い方法は？</div>
+<div class="wizard-hint">お持ちのクレジットカード・使うQRコード決済を選んでください (複数選択可)</div>
+<div class="wizard-subheading">💳 クレジットカード</div>
+<div class="wizard-options" data-key="cards" data-multi="true"></div>
+<div class="wizard-subheading">📱 QRコード決済</div>
+<div class="wizard-options" data-key="qrpay" data-multi="true"></div>
+</div>
+<div class="wizard-step" data-step="1">
+<div class="wizard-step-num">QUESTION 02 / 07</div>
+<div class="wizard-question">貯めているポイントは？</div>
+<div class="wizard-hint">店舗ポイント・アプリ会員・共通ポイントなどを選んでください (複数選択可)</div>
+<div class="wizard-options" data-key="points" data-multi="true"></div>
+</div>
+<div class="wizard-step" data-step="2"><div class="wizard-step-num">QUESTION 03 / 07</div><div class="wizard-question">お住まいはどの地方ですか？</div><div class="wizard-hint">該当する地方を一つ選択。「全国」を選ぶとEC・全国チェーンが優先されます。</div><div class="wizard-options" data-key="region" data-multi="false">
 <button class="wizard-option single-only" data-val="all"><span class="checkbox"></span><span class="opt-label">全国・指定なし<span class="opt-sub">EC・全国チェーン優先</span></span></button>
 <button class="wizard-option single-only" data-val="hokkaido"><span class="checkbox"></span><span class="opt-label">北海道<span class="opt-sub">札幌・函館 等</span></span></button>
 <button class="wizard-option single-only" data-val="tohoku"><span class="checkbox"></span><span class="opt-label">東北<span class="opt-sub">仙台・盛岡 等</span></span></button>
@@ -272,21 +317,21 @@ footer strong{color:var(--red)}
 <button class="wizard-option single-only" data-val="shikoku"><span class="checkbox"></span><span class="opt-label">四国<span class="opt-sub">高松・松山 等</span></span></button>
 <button class="wizard-option single-only" data-val="kyushu"><span class="checkbox"></span><span class="opt-label">九州・沖縄<span class="opt-sub">福岡・熊本・鹿児島</span></span></button>
 </div></div>
-<div class="wizard-step" data-step="2"><div class="wizard-step-num">QUESTION 03 / 06</div><div class="wizard-question">どんな施策に興味がありますか？</div><div class="wizard-hint">気になる施策タイプを選んでください (複数選択可)</div><div class="wizard-options" data-key="types" data-multi="true">
+<div class="wizard-step" data-step="3"><div class="wizard-step-num">QUESTION 04 / 07</div><div class="wizard-question">どんな施策に興味がありますか？</div><div class="wizard-hint">気になる施策タイプを選んでください (複数選択可)</div><div class="wizard-options" data-key="types" data-multi="true">
 <button class="wizard-option" data-val="discount"><span class="checkbox"></span><span class="opt-label">割引<span class="opt-sub">○%OFFなど即時値引き</span></span></button>
 <button class="wizard-option" data-val="points"><span class="checkbox"></span><span class="opt-label">ポイント倍増<span class="opt-sub">○倍・○%還元</span></span></button>
 <button class="wizard-option" data-val="payback"><span class="checkbox"></span><span class="opt-label">ペイバック<span class="opt-sub">商品券・キャッシュバック</span></span></button>
 <button class="wizard-option" data-val="clearance"><span class="checkbox"></span><span class="opt-label">クリアランス<span class="opt-sub">夏冬の在庫処分</span></span></button>
 <button class="wizard-option" data-val="member"><span class="checkbox"></span><span class="opt-label">会員限定招待<span class="opt-sub">百貨店招待会など</span></span></button>
 </div></div>
-<div class="wizard-step" data-step="3"><div class="wizard-step-num">QUESTION 04 / 06</div><div class="wizard-question">どの店舗グループを使いますか？</div><div class="wizard-hint">よく利用する店舗グループを選んでください (複数選択可)</div><div class="wizard-options" data-key="retailers" data-multi="true"></div></div>
-<div class="wizard-step" data-step="4"><div class="wizard-step-num">QUESTION 05 / 06</div><div class="wizard-question">何を重視しますか？</div><div class="wizard-hint">優先したいポイントを一つ選択。マッチング基準が変わります。</div><div class="wizard-options" data-key="priority" data-multi="false">
+<div class="wizard-step" data-step="4"><div class="wizard-step-num">QUESTION 05 / 07</div><div class="wizard-question">どの店舗グループを使いますか？</div><div class="wizard-hint">よく利用する店舗グループを選んでください (複数選択可)</div><div class="wizard-options" data-key="retailers" data-multi="true"></div></div>
+<div class="wizard-step" data-step="5"><div class="wizard-step-num">QUESTION 06 / 07</div><div class="wizard-question">何を重視しますか？</div><div class="wizard-hint">優先したいポイントを一つ選択。マッチング基準が変わります。</div><div class="wizard-options" data-key="priority" data-multi="false">
 <button class="wizard-option single-only" data-val="balanced"><span class="checkbox"></span><span class="opt-label">バランス重視<span class="opt-sub">まんべんなく評価</span></span></button>
 <button class="wizard-option single-only" data-val="value"><span class="checkbox"></span><span class="opt-label">価格優先<span class="opt-sub">割引率が高いものを優先</span></span></button>
 <button class="wizard-option single-only" data-val="convenience"><span class="checkbox"></span><span class="opt-label">利便性優先<span class="opt-sub">自分のカード・地域優先</span></span></button>
 <button class="wizard-option single-only" data-val="urgent"><span class="checkbox"></span><span class="opt-label">直近の即効性<span class="opt-sub">今すぐ使えるもの</span></span></button>
 </div></div>
-<div class="wizard-step" data-step="5"><div class="wizard-step-num">QUESTION 06 / 06</div><div class="wizard-question">いつ頃の購入を予定？</div><div class="wizard-hint">直近で買いたい時期を選んでください</div><div class="wizard-options" data-key="timing" data-multi="false">
+<div class="wizard-step" data-step="6"><div class="wizard-step-num">QUESTION 07 / 07</div><div class="wizard-question">いつ頃の購入を予定？</div><div class="wizard-hint">直近で買いたい時期を選んでください</div><div class="wizard-options" data-key="timing" data-multi="false">
 <button class="wizard-option single-only" data-val="now"><span class="checkbox"></span><span class="opt-label">すぐ買いたい<span class="opt-sub">今〜1ヶ月以内</span></span></button>
 <button class="wizard-option single-only" data-val="soon"><span class="checkbox"></span><span class="opt-label">2〜3ヶ月以内<span class="opt-sub">少し待てる</span></span></button>
 <button class="wizard-option single-only" data-val="halfyear"><span class="checkbox"></span><span class="opt-label">半年以内<span class="opt-sub">余裕がある</span></span></button>
@@ -512,46 +557,46 @@ const FURNITURE_EVENTS=[
 /* ===== コスメ版 EVENTS ===== */
 const COSMETICS_EVENTS=[
 /* @cosme系 */
-{id:'co1',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'BEAUTY DAY',type:'points',headline:'最大30%',headlineUnit:'還元',months:[12],valueScore:90,detail:'年に一度・3日間の大規模セール。最大30%ポイントバック・BEAUTY DAY限定アイテム・3,000円以上送料無料・18,000円以上でサンプルセット。',trend:'2023年12/1-12/3、2024年12月上旬実績。例年12月第1週の3日間に開催。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
-{id:'co2',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'SPECIAL WEEK (6月)',type:'points',headline:'最大30%',headlineUnit:'還元',months:[6],valueScore:80,detail:'年に一度、6月頃に7日間限定で開催。対象ブランドが最大30%ポイントバック・数量限定スペシャルアイテム・サンプルプレゼント。',trend:'毎年6月の恒例イベント。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
-{id:'co3',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'初売りセール',type:'points',headline:'10%',headlineUnit:'還元',months:[1],valueScore:65,detail:'1月初〜中旬の初売りセール。ニューイヤースペシャルセット・シークレットサンプル・10%ポイントバック。',trend:'2026年は1/1〜1/12開催。10%ポイントバックは1/9〜1/12。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
-{id:'co4',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'月初ポイント10倍',type:'points',headline:'10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,alwaysOn:true,detail:'毎月1〜4日に全品10%ポイントバック (通常1%の10倍)。月によっては最大20%まで上昇。',trend:'長期間継続している月例施策。',cardTypes:['cosme_member'],prefectures:'all'},
-{id:'co5',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'@cosme SHOPPING PARTY (3ヶ月毎)',type:'points',headline:'送料無料',headlineUnit:'+特典',months:[3,6,9,12],valueScore:45,detail:'3・6・9・12月に開催。期間中は1,500円以上で送料無料 (通常3,900円)、対象商品購入でサンプル・ノベルティプレゼント。',trend:'3ヶ月に1回・年4回の定例。',cardTypes:['cosme_member'],prefectures:'all'},
-{id:'co6',group:'cos_ec',subgroup:'@cosme',name:'@cosme プレミアムサービス',event:'お買い物コース シークレットセール',type:'points',headline:'最大30',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:55,alwaysOn:true,detail:'お買い物コース会員 (月額509円) 限定で、対象商品が最大30倍ポイントまたは最大20%OFF。毎月開催。',trend:'通年実施。',cardTypes:['cosme_premium'],prefectures:'all'},
-{id:'co7',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'HAPPY FRIDAY',type:'points',headline:'週次',headlineUnit:'更新',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'毎週金曜更新のセール・キャンペーン。先行予約・数量限定・購入特典・ポイントバックなど。',trend:'通年・毎週更新。',cardTypes:['cosme_member'],prefectures:'all'},
+{id:'co1',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'BEAUTY DAY',type:'points',headline:'最大30%',headlineUnit:'還元',months:[12],valueScore:90,cosmeType:'both',detail:'年に一度・3日間の大規模セール。最大30%ポイントバック・BEAUTY DAY限定アイテム・3,000円以上送料無料・18,000円以上でサンプルセット。',trend:'2023年12/1-12/3、2024年12月上旬実績。例年12月第1週の3日間に開催。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
+{id:'co2',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'SPECIAL WEEK (6月)',type:'points',headline:'最大30%',headlineUnit:'還元',months:[6],valueScore:80,cosmeType:'both',detail:'年に一度、6月頃に7日間限定で開催。対象ブランドが最大30%ポイントバック・数量限定スペシャルアイテム・サンプルプレゼント。',trend:'毎年6月の恒例イベント。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
+{id:'co3',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'初売りセール',type:'points',headline:'10%',headlineUnit:'還元',months:[1],valueScore:65,cosmeType:'both',detail:'1月初〜中旬の初売りセール。ニューイヤースペシャルセット・シークレットサンプル・10%ポイントバック。',trend:'2026年は1/1〜1/12開催。10%ポイントバックは1/9〜1/12。',cardTypes:['cosme_member','cosme_premium'],prefectures:'all'},
+{id:'co4',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'月初ポイント10倍',type:'points',headline:'10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,alwaysOn:true,cosmeType:'both',detail:'毎月1〜4日に全品10%ポイントバック (通常1%の10倍)。月によっては最大20%まで上昇。',trend:'長期間継続している月例施策。',cardTypes:['cosme_member'],prefectures:'all'},
+{id:'co5',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'@cosme SHOPPING PARTY (3ヶ月毎)',type:'points',headline:'送料無料',headlineUnit:'+特典',months:[3,6,9,12],valueScore:45,cosmeType:'both',detail:'3・6・9・12月に開催。期間中は1,500円以上で送料無料 (通常3,900円)、対象商品購入でサンプル・ノベルティプレゼント。',trend:'3ヶ月に1回・年4回の定例。',cardTypes:['cosme_member'],prefectures:'all'},
+{id:'co6',group:'cos_ec',subgroup:'@cosme',name:'@cosme プレミアムサービス',event:'お買い物コース シークレットセール',type:'points',headline:'最大30',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:55,alwaysOn:true,cosmeType:'both',detail:'お買い物コース会員 (月額509円) 限定で、対象商品が最大30倍ポイントまたは最大20%OFF。毎月開催。',trend:'通年実施。',cardTypes:['cosme_premium'],prefectures:'all'},
+{id:'co7',group:'cos_ec',subgroup:'@cosme',name:'@cosme SHOPPING',event:'HAPPY FRIDAY',type:'points',headline:'週次',headlineUnit:'更新',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,cosmeType:'both',detail:'毎週金曜更新のセール・キャンペーン。先行予約・数量限定・購入特典・ポイントバックなど。',trend:'通年・毎週更新。',cardTypes:['cosme_member'],prefectures:'all'},
 
 /* ドラッグストア */
-{id:'co8',group:'cos_drug',subgroup:'マツキヨココカラ',name:'マツモトキヨシ・ココカラファイン',event:'通年マツキヨココカラポイント',type:'points',headline:'1-3%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'100円(税抜)=1ポイント。月間1万円超で翌月2倍、2万円超で翌月3倍にステージアップ。dポイント/楽天ポイントとの二重取り可。',trend:'通年。',synergy:'dカード払いで「dポイント1%+マツキヨポイント1%+dカード還元1%=合計3%」の三重取り。dカード特約店なので特に有利。',cardTypes:['matsukiyo_app','dcard'],prefectures:'all'},
-{id:'co9',group:'cos_drug',subgroup:'マツキヨココカラ',name:'マツモトキヨシ・ココカラファイン',event:'ビューティ ハッピーデー',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:55,detail:'コスメ・ビューティアイテム対象のポイント倍デー。アプリクーポンと併用で最大10倍。',trend:'季節の変わり目に四半期ごとの開催傾向。',cardTypes:['matsukiyo_app'],prefectures:'all'},
-{id:'co10',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'お客様感謝デー (毎月20日)',type:'payback',headline:'1.5',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:75,alwaysOn:true,detail:'毎月20日にWAON POINTを200pt以上使うと1.5倍で買い物可能 (実質33%OFF)。月最大30,000ptで45,000円分のお会計可能。「ウエル活」の名で広く知られる。',trend:'2024年9月以降WAON POINT専用に。タバコ・調剤等を除き店内ほぼ全品が対象。',synergy:'ポイ活サイトでWAON POINTを大量に集めて、20日に化粧品・日用品をまとめ買いするのがコスメ最強の節約術。',cardTypes:['welcia_waon','aeon_card'],prefectures:'all'},
-{id:'co11',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'月曜2倍デー',type:'points',headline:'2',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'毎週月曜日はWAON POINTが2倍。',trend:'通年。',cardTypes:['welcia_waon','aeon_card'],prefectures:'all'},
-{id:'co12',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'シニアズデー (毎月15日)',type:'points',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'55歳以上対象。毎月15日に5%OFFまたはポイント加算。',trend:'通年。',cardTypes:['welcia_waon'],prefectures:'all'},
-{id:'co13',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'カウンセリング化粧品10倍デー',type:'points',headline:'10',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,detail:'カウンセリング化粧品 (ファンケル・オルビス・カネボウ・コーセー等のブランド品) 対象。WAON POINT 10倍。',trend:'店舗別に月数回開催。',cardTypes:['welcia_waon'],prefectures:'all'},
-{id:'co14',group:'cos_drug',subgroup:'ツルハ',name:'ツルハドラッグ・くすりの福太郎',event:'お客様感謝デー (1・10・20日)',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:45,alwaysOn:true,detail:'毎月1・10・20日にツルハポイントカード提示で5%引。月3回のお得日。',trend:'通年・長年継続。',synergy:'楽天ポイント二重取り併用で楽天カードユーザーは実質6%還元相当。',cardTypes:['tsuruha_app','rakuten'],prefectures:'all'},
-{id:'co15',group:'cos_drug',subgroup:'スギ薬局',name:'スギ薬局',event:'景品交換アップキャンペーン',type:'points',headline:'交換',headlineUnit:'アップ',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'スギポイントは賞品交換専用 (支払い充当不可)。景品交換時のお得度アップキャンペーンが不定期実施。',trend:'不定期開催。',cardTypes:['sugi_app'],prefectures:'all'},
-{id:'co16',group:'cos_drug',subgroup:'サンドラッグ',name:'サンドラッグ',event:'店舗別ポイント倍デー',type:'points',headline:'3-5',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,detail:'店舗ごとに3倍・5倍デーを定期開催。楽天ポイント二重取り併用可。LINEクーポン・スマートニュースクーポン併用可。',trend:'通年・店舗別に異なる頻度で開催。',cardTypes:['sundrug_app','rakuten'],prefectures:'all'},
+{id:'co8',group:'cos_drug',subgroup:'マツキヨココカラ',name:'マツモトキヨシ・ココカラファイン',event:'通年マツキヨココカラポイント',type:'points',headline:'1-3%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,cosmeType:'both',detail:'100円(税抜)=1ポイント。月間1万円超で翌月2倍、2万円超で翌月3倍にステージアップ。dポイント/楽天ポイントとの二重取り可。',trend:'通年。',synergy:'dカード払いで「dポイント1%+マツキヨポイント1%+dカード還元1%=合計3%」の三重取り。dカード特約店なので特に有利。',cardTypes:['matsukiyo_app','dcard'],prefectures:'all'},
+{id:'co9',group:'cos_drug',subgroup:'マツキヨココカラ',name:'マツモトキヨシ・ココカラファイン',event:'ビューティ ハッピーデー',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:55,cosmeType:'both',detail:'コスメ・ビューティアイテム対象のポイント倍デー。アプリクーポンと併用で最大10倍。',trend:'季節の変わり目に四半期ごとの開催傾向。',cardTypes:['matsukiyo_app'],prefectures:'all'},
+{id:'co10',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'お客様感謝デー (毎月20日)',type:'payback',headline:'1.5',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:75,alwaysOn:true,cosmeType:'both',detail:'毎月20日にWAON POINTを200pt以上使うと1.5倍で買い物可能 (実質33%OFF)。月最大30,000ptで45,000円分のお会計可能。「ウエル活」の名で広く知られる。',trend:'2024年9月以降WAON POINT専用に。タバコ・調剤等を除き店内ほぼ全品が対象。',synergy:'ポイ活サイトでWAON POINTを大量に集めて、20日に化粧品・日用品をまとめ買いするのがコスメ最強の節約術。',cardTypes:['welcia_waon','aeon_card'],prefectures:'all'},
+{id:'co11',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'月曜2倍デー',type:'points',headline:'2',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,cosmeType:'both',detail:'毎週月曜日はWAON POINTが2倍。',trend:'通年。',cardTypes:['welcia_waon','aeon_card'],prefectures:'all'},
+{id:'co12',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'シニアズデー (毎月15日)',type:'points',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,cosmeType:'both',detail:'55歳以上対象。毎月15日に5%OFFまたはポイント加算。',trend:'通年。',cardTypes:['welcia_waon'],prefectures:'all'},
+{id:'co13',group:'cos_drug',subgroup:'ウエルシア',name:'ウエルシア',event:'カウンセリング化粧品10倍デー',type:'points',headline:'10',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,cosmeType:'counseling',detail:'カウンセリング化粧品 (ファンケル・オルビス・カネボウ・コーセー等のブランド品) 対象。WAON POINT 10倍。',trend:'店舗別に月数回開催。',cardTypes:['welcia_waon'],prefectures:'all'},
+{id:'co14',group:'cos_drug',subgroup:'ツルハ',name:'ツルハドラッグ・くすりの福太郎',event:'お客様感謝デー (1・10・20日)',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:45,alwaysOn:true,cosmeType:'drugstore',detail:'毎月1・10・20日にツルハポイントカード提示で5%引。月3回のお得日。',trend:'通年・長年継続。',synergy:'楽天ポイント二重取り併用で楽天カードユーザーは実質6%還元相当。',cardTypes:['tsuruha_app','rakuten'],prefectures:'all'},
+{id:'co15',group:'cos_drug',subgroup:'スギ薬局',name:'スギ薬局',event:'景品交換アップキャンペーン',type:'points',headline:'交換',headlineUnit:'アップ',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,cosmeType:'drugstore',detail:'スギポイントは賞品交換専用 (支払い充当不可)。景品交換時のお得度アップキャンペーンが不定期実施。',trend:'不定期開催。',cardTypes:['sugi_app'],prefectures:'all'},
+{id:'co16',group:'cos_drug',subgroup:'サンドラッグ',name:'サンドラッグ',event:'店舗別ポイント倍デー',type:'points',headline:'3-5',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,cosmeType:'drugstore',detail:'店舗ごとに3倍・5倍デーを定期開催。楽天ポイント二重取り併用可。LINEクーポン・スマートニュースクーポン併用可。',trend:'通年・店舗別に異なる頻度で開催。',cardTypes:['sundrug_app','rakuten'],prefectures:'all'},
 
 /* 百貨店コスメ */
-{id:'co17',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY (伊勢丹新宿・三越本店等)',event:'ビューティ新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[11,12,1],valueScore:80,detail:'11月中旬〜予約開始、1/1〜順次お届け。デパコス各ブランドの限定キット・ホリデーコフレ・スペシャルセット。',trend:'2026年は11/12新春福袋スタート。',synergy:'エムアイカード払いで5-10%還元 (年間積算)。プラチナは常時10%。',cardTypes:['mi_card','iwataya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
-{id:'co18',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY',event:'ホリデーコフレ予約',type:'member',headline:'予約',headlineUnit:'限定',months:[10,11],valueScore:70,detail:'各ブランドのホリデーコフレ・クリスマスコフレを伊勢丹オンラインから先行予約可。シスレー・SHISEIDO・ジルスチュアート等。',trend:'例年10月下旬〜11月上旬に予約スタート。',cardTypes:['mi_card','iwataya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
-{id:'co19',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY',event:'メンバーズ感謝祭・招待会連動',type:'member',headline:'会員',headlineUnit:'特典',months:[2,3,8,9],valueScore:55,detail:'三越伊勢丹の年2回 (春・秋) の招待会・感謝祭にコスメフロアも参加。エムアイカード会員は特別優待・ノベルティ・先行販売。',trend:'8-9月感謝祭・2-3月招待会と連動。',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
-{id:'co20',group:'cos_depart',subgroup:'阪急阪神',name:'HANKYU BEAUTY ONLINE (阪急うめだ等)',event:'ネットポイント最大30倍',type:'points',headline:'最大30',headlineUnit:'倍',months:[3,5,9,11],valueScore:65,detail:'HANKYU BEAUTY ONLINEでネットポイント最大30倍・送料無料 (一部除外)。デパコスをお得にゲット。',trend:'年4回程度開催。',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
-{id:'co21',group:'cos_depart',subgroup:'阪急阪神',name:'阪急BEAUTY (阪急うめだ本店等)',event:'阪急BEAUTY新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[11,12,1],valueScore:80,detail:'11月中旬予約開始、約50ブランドの福袋。アユーラ・クラランス・クリニーク・SABON・ジバンシイ・シュウウエムラ・ボビイブラウン等。',trend:'2026年は11/12 18時/20時から予約開始。',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
-{id:'co22',group:'cos_depart',subgroup:'高島屋',name:'高島屋ビューティ',event:'ホリデーコフレ・新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[10,11,12,1],valueScore:75,detail:'10-11月ホリデーコフレ予約、12月末〜1月福袋。タカシマヤカードで5-10%還元と併用。',trend:'例年10月下旬予約スタート。',cardTypes:['takashimaya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','大阪府','京都府','愛知県','岡山県']},
-{id:'co23',group:'cos_depart',subgroup:'大丸松坂屋',name:'大丸・松坂屋 ビューティ',event:'ホリデーコフレ・新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[10,11,12,1],valueScore:75,detail:'大丸東京・梅田・心斎橋・神戸・松坂屋名古屋等のコスメフロアでホリデーコフレ予約と新春福袋。',trend:'例年10月下旬〜11月上旬予約開始。',cardTypes:['daimaru'],prefectures:['東京都','神奈川県','大阪府','兵庫県','愛知県','京都府','福岡県','高知県','山口県']},
+{id:'co17',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY (伊勢丹新宿・三越本店等)',event:'ビューティ新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[11,12,1],valueScore:80,cosmeType:'counseling',detail:'11月中旬〜予約開始、1/1〜順次お届け。デパコス各ブランドの限定キット・ホリデーコフレ・スペシャルセット。',trend:'2026年は11/12新春福袋スタート。',synergy:'エムアイカード払いで5-10%還元 (年間積算)。プラチナは常時10%。',cardTypes:['mi_card','iwataya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'co18',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY',event:'ホリデーコフレ予約',type:'member',headline:'予約',headlineUnit:'限定',months:[10,11],valueScore:70,cosmeType:'counseling',detail:'各ブランドのホリデーコフレ・クリスマスコフレを伊勢丹オンラインから先行予約可。シスレー・SHISEIDO・ジルスチュアート等。',trend:'例年10月下旬〜11月上旬に予約スタート。',cardTypes:['mi_card','iwataya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'co19',group:'cos_depart',subgroup:'三越伊勢丹',name:'ISETAN BEAUTY',event:'メンバーズ感謝祭・招待会連動',type:'member',headline:'会員',headlineUnit:'特典',months:[2,3,8,9],valueScore:55,cosmeType:'counseling',detail:'三越伊勢丹の年2回 (春・秋) の招待会・感謝祭にコスメフロアも参加。エムアイカード会員は特別優待・ノベルティ・先行販売。',trend:'8-9月感謝祭・2-3月招待会と連動。',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'co20',group:'cos_depart',subgroup:'阪急阪神',name:'HANKYU BEAUTY ONLINE (阪急うめだ等)',event:'ネットポイント最大30倍',type:'points',headline:'最大30',headlineUnit:'倍',months:[3,5,9,11],valueScore:65,cosmeType:'counseling',detail:'HANKYU BEAUTY ONLINEでネットポイント最大30倍・送料無料 (一部除外)。デパコスをお得にゲット。',trend:'年4回程度開催。',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'co21',group:'cos_depart',subgroup:'阪急阪神',name:'阪急BEAUTY (阪急うめだ本店等)',event:'阪急BEAUTY新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[11,12,1],valueScore:80,cosmeType:'counseling',detail:'11月中旬予約開始、約50ブランドの福袋。アユーラ・クラランス・クリニーク・SABON・ジバンシイ・シュウウエムラ・ボビイブラウン等。',trend:'2026年は11/12 18時/20時から予約開始。',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'co22',group:'cos_depart',subgroup:'高島屋',name:'高島屋ビューティ',event:'ホリデーコフレ・新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[10,11,12,1],valueScore:75,cosmeType:'counseling',detail:'10-11月ホリデーコフレ予約、12月末〜1月福袋。タカシマヤカードで5-10%還元と併用。',trend:'例年10月下旬予約スタート。',cardTypes:['takashimaya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','大阪府','京都府','愛知県','岡山県']},
+{id:'co23',group:'cos_depart',subgroup:'大丸松坂屋',name:'大丸・松坂屋 ビューティ',event:'ホリデーコフレ・新春福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[10,11,12,1],valueScore:75,cosmeType:'counseling',detail:'大丸東京・梅田・心斎橋・神戸・松坂屋名古屋等のコスメフロアでホリデーコフレ予約と新春福袋。',trend:'例年10月下旬〜11月上旬予約開始。',cardTypes:['daimaru'],prefectures:['東京都','神奈川県','大阪府','兵庫県','愛知県','京都府','福岡県','高知県','山口県']},
 
 /* ブランド独自 */
-{id:'co24',group:'cos_brand',subgroup:'SHISEIDO',name:'SHISEIDO公式オンライン',event:'ホリデーコレクション',type:'discount',headline:'限定',headlineUnit:'キット',months:[10,11,12],valueScore:55,detail:'数量限定ホリデーキット・アドベントカレンダー販売。会員限定先行販売あり。',trend:'例年10月下旬発売。',cardTypes:[],prefectures:'all'},
-{id:'co25',group:'cos_brand',subgroup:'ORBIS',name:'オルビス公式',event:'ORBIS APP メンバー特典',type:'points',headline:'1-10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'会員ランク別1-10%ポイント還元。誕生月特典・トライアルキット・ノベルティ。',trend:'通年・会員ランク制。',cardTypes:[],prefectures:'all'},
-{id:'co26',group:'cos_brand',subgroup:'FANCL',name:'ファンケル公式',event:'感謝デー (毎月10日)',type:'points',headline:'2-3',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'毎月10日はファンケル感謝デー。ポイント2-3倍・送料無料。',trend:'長年継続の通年施策。',cardTypes:[],prefectures:'all'},
-{id:'co27',group:'cos_brand',subgroup:'横断',name:'コスメブランド各社',event:'春の新作リニューアル発売',type:'discount',headline:'新作',headlineUnit:'発売',months:[2,3],valueScore:50,detail:'春のシーズン (2-3月) は各ブランドが新作・リニューアル品を一斉発売。先行サンプル・予約特典が手厚い時期。',trend:'毎年2-3月、9月に新作集中投入の傾向。',cardTypes:[],prefectures:'all'},
-{id:'co28',group:'cos_brand',subgroup:'横断',name:'コスメブランド各社',event:'秋の新作リニューアル発売',type:'discount',headline:'新作',headlineUnit:'発売',months:[8,9],valueScore:50,detail:'秋シーズン (8-9月) の新作・リニューアル品。スキンケア・アイメイクの強化シーズン。',trend:'毎年8-9月。',cardTypes:[],prefectures:'all'},
+{id:'co24',group:'cos_brand',subgroup:'SHISEIDO',name:'SHISEIDO公式オンライン',event:'ホリデーコレクション',type:'discount',headline:'限定',headlineUnit:'キット',months:[10,11,12],valueScore:55,cosmeType:'counseling',detail:'数量限定ホリデーキット・アドベントカレンダー販売。会員限定先行販売あり。',trend:'例年10月下旬発売。',cardTypes:[],prefectures:'all'},
+{id:'co25',group:'cos_brand',subgroup:'ORBIS',name:'オルビス公式',event:'ORBIS APP メンバー特典',type:'points',headline:'1-10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,cosmeType:'both',detail:'会員ランク別1-10%ポイント還元。誕生月特典・トライアルキット・ノベルティ。',trend:'通年・会員ランク制。',cardTypes:[],prefectures:'all'},
+{id:'co26',group:'cos_brand',subgroup:'FANCL',name:'ファンケル公式',event:'感謝デー (毎月10日)',type:'points',headline:'2-3',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,cosmeType:'both',detail:'毎月10日はファンケル感謝デー。ポイント2-3倍・送料無料。',trend:'長年継続の通年施策。',cardTypes:[],prefectures:'all'},
+{id:'co27',group:'cos_brand',subgroup:'横断',name:'コスメブランド各社',event:'春の新作リニューアル発売',type:'discount',headline:'新作',headlineUnit:'発売',months:[2,3],valueScore:50,cosmeType:'both',detail:'春のシーズン (2-3月) は各ブランドが新作・リニューアル品を一斉発売。先行サンプル・予約特典が手厚い時期。',trend:'毎年2-3月、9月に新作集中投入の傾向。',cardTypes:[],prefectures:'all'},
+{id:'co28',group:'cos_brand',subgroup:'横断',name:'コスメブランド各社',event:'秋の新作リニューアル発売',type:'discount',headline:'新作',headlineUnit:'発売',months:[8,9],valueScore:50,cosmeType:'both',detail:'秋シーズン (8-9月) の新作・リニューアル品。スキンケア・アイメイクの強化シーズン。',trend:'毎年8-9月。',cardTypes:[],prefectures:'all'},
 
 /* EC他 */
-{id:'co29',group:'ec',subgroup:'楽天',name:'楽天市場 (コスメカテゴリ)',event:'楽天お買い物マラソン コスメ',type:'points',headline:'最大10',headlineUnit:'倍',months:[1,2,4,5,7,8,10,11],valueScore:55,detail:'@cosme SHOPPING楽天市場店・各ブランド楽天市場店・ドラッグストア楽天市場店が対象。買い回りで最大10倍。',trend:'毎月1〜3回。',synergy:'楽天カード+SPU+5と0のつく日と組み合わせて買い回りすれば、ポイント還元率15%超も可能。',cardTypes:['rakuten'],prefectures:'all'},
-{id:'co30',group:'ec',subgroup:'Amazon',name:'Amazon ビューティ',event:'プライムデー・BF (ビューティ)',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[3,7,10,11],valueScore:60,detail:'新生活セール (3月)、プライムデー (7月)、プライム感謝祭 (10月)、BF (11月) でビューティ製品が値下げ・ポイント還元アップ。',trend:'2026年BFは11月後半。',cardTypes:['amazon_card'],prefectures:'all'},
-{id:'co31',group:'ec',subgroup:'Qoo10',name:'Qoo10 メガ割',event:'メガ割 (コスメ)',type:'discount',headline:'20%',headlineUnit:'OFF',months:[3,6,9,11],valueScore:70,detail:'年4回開催のQoo10メガ割は韓国コスメ・プチプラの最強セール。20%OFFクーポン+ショップ独自還元で実質30-40%OFFも。',trend:'2024-2025年は3月・6月・9月・11月の年4回・各回約2週間。',cardTypes:[],prefectures:'all'},
-{id:'co32',group:'ec',subgroup:'LIPS',name:'LIPSショッピング',event:'季節キャンペーン',type:'points',headline:'最大15%',headlineUnit:'還元',months:[3,6,9,12],valueScore:50,detail:'コスメ口コミアプリLIPS内のショッピング機能。季節ごとのポイントアップキャンペーン。',trend:'四半期ごと開催。',cardTypes:[],prefectures:'all'},
+{id:'co29',group:'ec',subgroup:'楽天',name:'楽天市場 (コスメカテゴリ)',event:'楽天お買い物マラソン コスメ',type:'points',headline:'最大10',headlineUnit:'倍',months:[1,2,4,5,7,8,10,11],valueScore:55,cosmeType:'both',detail:'@cosme SHOPPING楽天市場店・各ブランド楽天市場店・ドラッグストア楽天市場店が対象。買い回りで最大10倍。',trend:'毎月1〜3回。',synergy:'楽天カード+SPU+5と0のつく日と組み合わせて買い回りすれば、ポイント還元率15%超も可能。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'co30',group:'ec',subgroup:'Amazon',name:'Amazon ビューティ',event:'プライムデー・BF (ビューティ)',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[3,7,10,11],valueScore:60,cosmeType:'both',detail:'新生活セール (3月)、プライムデー (7月)、プライム感謝祭 (10月)、BF (11月) でビューティ製品が値下げ・ポイント還元アップ。',trend:'2026年BFは11月後半。',cardTypes:['amazon_card'],prefectures:'all'},
+{id:'co31',group:'ec',subgroup:'Qoo10',name:'Qoo10 メガ割',event:'メガ割 (コスメ)',type:'discount',headline:'20%',headlineUnit:'OFF',months:[3,6,9,11],valueScore:70,cosmeType:'drugstore',detail:'年4回開催のQoo10メガ割は韓国コスメ・プチプラの最強セール。20%OFFクーポン+ショップ独自還元で実質30-40%OFFも。',trend:'2024-2025年は3月・6月・9月・11月の年4回・各回約2週間。',cardTypes:[],prefectures:'all'},
+{id:'co32',group:'ec',subgroup:'LIPS',name:'LIPSショッピング',event:'季節キャンペーン',type:'points',headline:'最大15%',headlineUnit:'還元',months:[3,6,9,12],valueScore:50,cosmeType:'both',detail:'コスメ口コミアプリLIPS内のショッピング機能。季節ごとのポイントアップキャンペーン。',trend:'四半期ごと開催。',cardTypes:[],prefectures:'all'},
 ];
 
 /* ===== 版別設定 ===== */
@@ -628,6 +673,7 @@ const VERSION_DATA = {
 
 /* ===== 状態 ===== */
 let currentVersion = 'general';
+let cosmeticsFilter = 'all'; /* 'all' | 'counseling' | 'drugstore' */
 function currentEvents() { return VERSION_DATA[currentVersion].events; }
 function groupLabel(g) { return VERSION_DATA[currentVersion].groupLabels[g] || g; }
 
@@ -657,6 +703,12 @@ function eventMatchesFilters(ev,f){
   if(f.type!=='all'&&ev.type!==f.type)return false;
   if(f.retailer!=='all'&&ev.group!==f.retailer&&ev.group!=='all')return false;
   if(f.card!=='all'){const c=ev.cardTypes||[];if(!c.includes(f.card))return false}
+  /* コスメ版のときのみ、cosmeTypeフィルタを適用 */
+  if(currentVersion==='cosmetics'&&cosmeticsFilter!=='all'){
+    const ct=ev.cosmeType;
+    /* 'both'は両カテゴリで表示、指定タイプのみ受け入れる */
+    if(ct&&ct!=='both'&&ct!==cosmeticsFilter)return false;
+  }
   return true;
 }
 
@@ -809,20 +861,40 @@ function closeCardModal(){document.getElementById('modalBackdrop').classList.rem
 function renderAll(){renderIntensityMap();renderForecastCards()}
 
 /* ===== ウィザード ===== */
-const WIZARD_STEPS=6;
-let wizardState={currentStep:0,answers:{cards:[],region:null,types:[],retailers:[],priority:'balanced',timing:null}};
+const WIZARD_STEPS=7;
+let wizardState={currentStep:0,answers:{cards:[],qrpay:[],points:[],region:null,types:[],retailers:[],priority:'balanced',timing:null}};
+
+/* カード分類: クレカ/QR決済/ポイント */
+const QR_PAY_CARDS=new Set(['paypay','vpoint']);
+const POINT_CARDS=new Set(['nimoca','shimamura_app','imc','ikebe_club','yamano_point','nitori_app','ikea_family','cosme_member','cosme_premium','matsukiyo_app','welcia_waon','sugi_app','tsuruha_app','sundrug_app']);
+function classifyCard(c){
+  if(QR_PAY_CARDS.has(c))return'qrpay';
+  if(POINT_CARDS.has(c))return'points';
+  return'cards';
+}
 
 function buildCardOptions(){
-  const c=document.querySelector('[data-key="cards"]');
-  const used=new Set(['none']);
-  /* 全版のカードを集める (ユーザは全版で同じカードを持っている前提) */
+  /* カード/QR決済/ポイントを分類して各セクションに配置 */
+  const cardsEl=document.querySelector('[data-key="cards"]');
+  const qrEl=document.querySelector('[data-key="qrpay"]');
+  const pointsEl=document.querySelector('[data-key="points"]');
+  const used=new Set();
+  /* 全版のカードを集める */
   Object.values(VERSION_DATA).forEach(v=>v.events.forEach(ev=>(ev.cardTypes||[]).forEach(c2=>used.add(c2))));
-  const cards=Array.from(used).filter(c=>c==='none'||CARD_DETAILS[c]).map(c=>{
-    if(c==='none')return{val:'none',label:'特になし / 現金派',sub:'カードは持っていない'};
+  const groups={cards:[],qrpay:[],points:[]};
+  Array.from(used).filter(c=>CARD_DETAILS[c]).forEach(c=>{
     const cd=CARD_DETAILS[c];
-    return{val:c,label:cd.name,sub:cd.primaryUse};
+    const cat=classifyCard(c);
+    groups[cat].push({val:c,label:cd.name,sub:cd.primaryUse});
   });
-  c.innerHTML=cards.map(o=>`<button class="wizard-option" data-val="${o.val}"><span class="checkbox"></span><span class="opt-label">${o.label}<span class="opt-sub">${o.sub}</span></span></button>`).join('');
+  /* Q1のクレカ末尾に「特になし / 現金派」を追加 */
+  groups.cards.push({val:'none',label:'特になし / 現金派',sub:'クレジットカードは持っていない'});
+  groups.qrpay.push({val:'none_qr',label:'使わない',sub:'QRコード決済は利用しない'});
+  groups.points.push({val:'none_pt',label:'特になし',sub:'ポイントは貯めていない'});
+  const renderOpts=arr=>arr.map(o=>`<button class="wizard-option" data-val="${o.val}"><span class="checkbox"></span><span class="opt-label">${o.label}<span class="opt-sub">${o.sub}</span></span></button>`).join('');
+  if(cardsEl)cardsEl.innerHTML=renderOpts(groups.cards);
+  if(qrEl)qrEl.innerHTML=renderOpts(groups.qrpay);
+  if(pointsEl)pointsEl.innerHTML=renderOpts(groups.points);
 }
 
 function buildWizardRetailerOptions(){
@@ -897,9 +969,14 @@ function computeMatchScore(ev,ans){
   };
   const w=weights[ans.priority]||weights.balanced;
   let s=0;
-  const uc=ans.cards.filter(c=>c!=='none');
-  if(uc.length>0&&ev.cardTypes&&ev.cardTypes.length>0){
-    if(ev.cardTypes.some(c=>uc.includes(c)))s+=w.cards;
+  /* カード・QR決済・ポイントを全部統合して判定 */
+  const allUserPays=[
+    ...(ans.cards||[]).filter(c=>c!=='none'),
+    ...(ans.qrpay||[]).filter(c=>c!=='none_qr'),
+    ...(ans.points||[]).filter(c=>c!=='none_pt'),
+  ];
+  if(allUserPays.length>0&&ev.cardTypes&&ev.cardTypes.length>0){
+    if(ev.cardTypes.some(c=>allUserPays.includes(c)))s+=w.cards;
   }else if(!ev.cardTypes||ev.cardTypes.length===0)s+=w.cards*0.5;
   if(ans.region==='all'){if(ev.prefectures==='all')s+=w.region;else s+=w.region*0.4}
   else if(ev.prefectures==='all')s+=w.region*0.8;
@@ -935,8 +1012,13 @@ function showRecommendations(){
   scored.sort((a,b)=>b.matchScore-a.matchScore||(a.year-b.year)||(a.month-b.month));
 
   const h=document.getElementById('recommendHeader');
-  const cl=ans.cards.filter(c=>c!=='none').map(c=>CARD_DETAILS[c]?.name||c);
-  const cs=cl.length>0?cl.slice(0,3).join(' / ')+(cl.length>3?` 他${cl.length-3}枚`:''):'カード指定なし';
+  const fmtNames=arr=>arr.length>0?arr.slice(0,3).join(' / ')+(arr.length>3?` 他${arr.length-3}件`:''):'なし';
+  const cardNames=ans.cards.filter(c=>c!=='none').map(c=>CARD_DETAILS[c]?.name||c);
+  const qrNames=ans.qrpay.filter(c=>c!=='none_qr').map(c=>CARD_DETAILS[c]?.name||c);
+  const pointNames=ans.points.filter(c=>c!=='none_pt').map(c=>CARD_DETAILS[c]?.name||c);
+  const csCard=fmtNames(cardNames);
+  const csQr=fmtNames(qrNames);
+  const csPt=fmtNames(pointNames);
   const rl=ans.region==='all'?'全国':REGION_LABEL[ans.region]||'指定なし';
   const tl=ans.types.length>0?ans.types.map(t=>TYPE_LABEL[t]).join(' / '):'すべての施策';
   const rtl=ans.retailers.length>0?ans.retailers.map(r=>groupLabel(r)).join(' / '):'すべての店舗';
@@ -944,7 +1026,7 @@ function showRecommendations(){
   const tll=tlm[ans.timing]||'指定なし';
   const plm={balanced:'バランス重視',value:'価格優先',convenience:'利便性優先',urgent:'即効性優先'};
   const pll=plm[ans.priority]||'バランス重視';
-  h.innerHTML=`<h3>🎯 ${VERSION_DATA[currentVersion].label} あなたへのおすすめ ${scored.length} 件</h3><div class="summary"><strong>支払い:</strong> ${cs}<br><strong>地域:</strong> ${rl} / <strong>施策:</strong> ${tl}<br><strong>店舗:</strong> ${rtl}<br><strong>重視:</strong> ${pll} / <strong>時期:</strong> ${tll}</div><div class="recommend-actions"><button id="wizardRestart">← 条件を変える</button></div>`;
+  h.innerHTML=`<h3>🎯 ${VERSION_DATA[currentVersion].label} あなたへのおすすめ ${scored.length} 件</h3><div class="summary"><strong>💳 クレカ:</strong> ${csCard} / <strong>📱 QR:</strong> ${csQr}<br><strong>🎁 ポイント:</strong> ${csPt}<br><strong>地域:</strong> ${rl} / <strong>施策:</strong> ${tl}<br><strong>店舗:</strong> ${rtl}<br><strong>重視:</strong> ${pll} / <strong>時期:</strong> ${tll}</div><div class="recommend-actions"><button id="wizardRestart">← 条件を変える</button></div>`;
   document.getElementById('wizardRestart').addEventListener('click',restartWizard);
 
   renderRecommendList(scored);
@@ -968,7 +1050,7 @@ function renderRecommendList(items){
 }
 
 function restartWizard(){
-  wizardState={currentStep:0,answers:{cards:[],region:null,types:[],retailers:[],priority:'balanced',timing:null}};
+  wizardState={currentStep:0,answers:{cards:[],qrpay:[],points:[],region:null,types:[],retailers:[],priority:'balanced',timing:null}};
   document.querySelectorAll('.wizard-option').forEach(o=>o.classList.remove('selected'));
   document.getElementById('wizardPanel').style.display='block';
   document.getElementById('recommendResults').style.display='none';
@@ -987,21 +1069,20 @@ function setupWizardSubgroupClicks(){
 
 /* ===== 版切替 ===== */
 function setupVersionTabs(){
-  document.querySelectorAll('.ver-tab').forEach(t=>{
-    t.addEventListener('click',()=>{
-      const v=t.dataset.version;
-      if(v===currentVersion)return;
-      currentVersion=v;
-      document.querySelectorAll('.ver-tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
-      updateRetailerOptions();
-      updateCardOptions();
-      buildWizardRetailerOptions();
-      setupWizardSubgroupClicks();
-      renderAll();
-      /* ウィザードがすでに表示済みなら結果も再計算 */
-      if(document.getElementById('recommendResults').style.display==='block'){restartWizard()}
-    });
+  const sel=document.getElementById('versionSelect');
+  if(!sel)return;
+  sel.addEventListener('change',()=>{
+    const v=sel.value;
+    if(v===currentVersion)return;
+    currentVersion=v;
+    updateRetailerOptions();
+    updateCardOptions();
+    buildWizardRetailerOptions();
+    setupWizardSubgroupClicks();
+    updateCosmeticsFilterVisibility();
+    renderAll();
+    /* ウィザードがすでに表示済みなら結果も再計算 */
+    if(document.getElementById('recommendResults').style.display==='block'){restartWizard()}
   });
 }
 
@@ -1014,6 +1095,32 @@ function setupModeTabs(){
       document.querySelectorAll('.mode-content').forEach(c=>c.classList.remove('active'));
       document.getElementById('mode-'+m).classList.add('active');
     });
+  });
+}
+
+function updateCosmeticsFilterVisibility(){
+  const el=document.getElementById('cosTypeFilter');
+  if(!el)return;
+  if(currentVersion==='cosmetics'){
+    el.classList.add('visible');
+  }else{
+    el.classList.remove('visible');
+    /* コスメ版以外に切り替えたらフィルタもリセット */
+    cosmeticsFilter='all';
+    el.querySelectorAll('.cos-type-btn').forEach(b=>b.classList.toggle('active',b.dataset.cos==='all'));
+  }
+}
+
+function setupCosmeticsFilterClicks(){
+  const el=document.getElementById('cosTypeFilter');
+  if(!el)return;
+  el.addEventListener('click',e=>{
+    const btn=e.target.closest('.cos-type-btn');
+    if(!btn)return;
+    const v=btn.dataset.cos;
+    cosmeticsFilter=v;
+    el.querySelectorAll('.cos-type-btn').forEach(b=>b.classList.toggle('active',b===btn));
+    renderForecastCards();
   });
 }
 
@@ -1050,6 +1157,8 @@ function init(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCardModal()});
   setupModeTabs();
   setupVersionTabs();
+  setupCosmeticsFilterClicks();
+  updateCosmeticsFilterVisibility();
   buildCardOptions();
   buildWizardRetailerOptions();
   setupWizardOptionClicks();
