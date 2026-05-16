@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#f4eee2">
+<title>お買い得予報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f4eee2;--paper-dark:#e8dfc9;--ink:#1a1814;--ink-soft:#4a443a;--red:#c33a2e;--red-deep:#8a201a;--gold:#b8893b;--blue:#2d5a7a;--green:#3d6b3a;--purple:#6b4a7a;--teal:#2d7a6b;--line:#6b5d44;--w-rain:#7a8b9c;--w-cloud:#c7b89e;--w-sun:#f5d97a;--w-rainbow:#e85d3a}
+html{color-scheme:light only;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper)!important;color:var(--ink)!important;font-family:'Noto Sans JP',sans-serif;min-height:100vh;overflow-x:hidden}
+input,select,textarea,button{color-scheme:light;color:var(--ink);background-color:var(--paper)}
+@media(prefers-color-scheme:dark){
+html,body{background:var(--paper)!important;color:var(--ink)!important}
+.wizard-option,.wizard-option .opt-label,.wizard-option .opt-sub{color:var(--ink)!important}
+.wizard-option.selected,.wizard-option.selected .opt-label{color:var(--paper)!important}
+.wizard-option.selected .opt-sub{color:rgba(244,238,226,.75)!important}
+.card-detail,.card-trend,.card-tags,footer{color:var(--ink-soft)!important}
+.card-retailer,.card-headline,.card-when strong{color:var(--ink)!important}
+.modal{background:var(--paper)!important;color:var(--ink)!important}
+.modal-section-content{color:var(--ink)!important}
+select,input{color:var(--ink)!important;background-color:var(--paper)!important}
+button.secondary{color:var(--ink)!important;background-color:transparent!important}
+button:not(.secondary):not(.banner-btn):not(.mode-tab):not(.modal-close):not(.wizard-option):not(.ver-tab){color:var(--paper)!important;background-color:var(--ink)!important}
+.banner-btn{color:var(--paper)!important;background-color:var(--purple)!important}
+.mode-tab.active,.ver-tab.active{color:var(--paper)!important;background-color:var(--ink)!important}
+.mode-tab:not(.active),.ver-tab:not(.active){color:var(--ink-soft)!important;background-color:var(--paper-dark)!important}
+.modal-header,.modal-header h3{color:var(--paper)!important}
+.recommend-header,.recommend-header h3{color:var(--paper)!important}
+.recommend-header .summary{color:rgba(244,238,226,.85)!important}
+.imap-cell{color:var(--ink)!important}
+.imap-cell.w-rain,.imap-cell.w-rainbow{color:#fff!important}
+}
+.container{max-width:1400px;margin:0 auto;padding:32px 20px 60px}
+header{border-top:3px double var(--ink);border-bottom:1px solid var(--ink);padding:16px 0 12px;margin-bottom:20px}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap}
+.brand{font-family:'Shippori Mincho',serif;font-weight:800;font-size:clamp(28px,5vw,48px);letter-spacing:-.02em;line-height:1}
+.brand .accent{color:var(--red);font-style:italic}
+.subtitle{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--ink-soft);text-align:right}
+.meta-strip{display:flex;gap:14px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);flex-wrap:wrap}
+.meta-strip span::before{content:'◆ ';color:var(--red)}
+.tagline{font-family:'Shippori Mincho',serif;font-size:13px;line-height:1.7;color:var(--ink-soft);margin-top:12px;max-width:760px}
+.version-selector{display:flex;gap:6px;margin-bottom:14px;padding:5px;background:var(--paper-dark);border:1px solid var(--ink);flex-wrap:wrap}
+.ver-tab{flex:1;min-width:100px;padding:10px 12px;background:transparent;border:1px solid transparent;cursor:pointer;font-family:'Shippori Mincho',serif;font-weight:700;font-size:14px;color:var(--ink-soft);transition:all .15s;text-align:center}
+.ver-tab:hover{background:rgba(255,255,255,.5);color:var(--ink)}
+.ver-tab.active{background:var(--ink);color:var(--paper);box-shadow:2px 2px 0 var(--gold)}
+.mode-tabs{display:flex;margin-bottom:20px;border-bottom:2px solid var(--ink)}
+.mode-tab{flex:1;max-width:280px;padding:11px 16px;background:var(--paper-dark);border:1px solid var(--ink);border-bottom:none;cursor:pointer;font-family:'Shippori Mincho',serif;font-weight:700;font-size:14px;color:var(--ink-soft);transition:all .15s;text-align:center}
+.mode-tab:hover{background:var(--paper)}
+.mode-tab.active{background:var(--ink);color:var(--paper)}
+.mode-tab .tab-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);margin-right:5px}
+.mode-tab.active .tab-num{color:var(--gold)}
+.mode-content{display:none}
+.mode-content.active{display:block}
+.filters{background:rgba(255,255,255,.4);border:1px solid var(--line);padding:20px;margin-bottom:28px;position:relative}
+.filters::before{content:'観測条件入力';position:absolute;top:-10px;left:14px;background:var(--paper);padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);font-weight:700}
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);margin-bottom:6px}
+.field label::before{content:'└ ';color:var(--line)}
+select,input[type="month"]{width:100%;min-width:0;max-width:100%;box-sizing:border-box;padding:9px 11px;background:var(--paper);border:1px solid var(--ink);font-family:'Noto Sans JP',sans-serif;font-size:14px;color:var(--ink);cursor:pointer;-webkit-appearance:none;appearance:none;height:40px;line-height:1.2}
+input[type="month"]::-webkit-calendar-picker-indicator{margin-left:4px;cursor:pointer}
+input[type="month"]::-webkit-inner-spin-button,input[type="month"]::-webkit-clear-button{display:none;-webkit-appearance:none}
+select:focus,input:focus{outline:none;background:#fff;box-shadow:2px 2px 0 var(--red)}
+.filter-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+button{font-family:'Shippori Mincho',serif;font-weight:700;font-size:14px;padding:10px 20px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:all .15s}
+button:hover{background:var(--red);border-color:var(--red)}
+button.secondary{background:transparent;color:var(--ink)}
+button.secondary:hover{background:var(--ink);color:var(--paper)}
+.wizard{background:rgba(255,255,255,.5);border:1px solid var(--ink);padding:28px 24px;position:relative;margin-bottom:28px}
+.wizard::before{content:'お得情報アンケート';position:absolute;top:-10px;left:18px;background:var(--paper);padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);font-weight:700}
+.wizard-progress{display:flex;gap:5px;margin-bottom:20px}
+.wizard-step-dot{flex:1;height:4px;background:var(--paper-dark)}
+.wizard-step-dot.complete{background:var(--gold)}
+.wizard-step-dot.current{background:var(--red)}
+.wizard-step{display:none}
+.wizard-step.active{display:block}
+.wizard-step-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);font-weight:700;margin-bottom:6px}
+.wizard-question{font-family:'Shippori Mincho',serif;font-size:20px;font-weight:700;margin-bottom:5px}
+.wizard-hint{font-size:12px;color:var(--ink-soft);margin-bottom:20px;line-height:1.6}
+.wizard-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:22px}
+.wizard-option{padding:12px 14px;border:1px solid var(--line);background:var(--paper);cursor:pointer;text-align:left;font-size:13px;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.wizard-option:hover{background:#fff;border-color:var(--ink)}
+.wizard-option.selected{background:var(--ink)!important;color:var(--paper)!important;border-color:var(--ink)!important;box-shadow:3px 3px 0 var(--gold)}
+.wizard-option .checkbox{width:14px;height:14px;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.wizard-option.selected .checkbox::after{content:'✓';color:var(--paper)}
+.wizard-option.single-only .checkbox{border-radius:50%}
+.wizard-option .opt-label{flex:1;line-height:1.3;color:inherit}
+.wizard-option .opt-sub{display:block;font-size:10px;color:var(--ink-soft);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.wizard-option.selected .opt-sub{color:rgba(244,238,226,.75)!important}
+.wizard-nav{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px dashed var(--line);padding-top:14px}
+.wizard-nav-info{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft)}
+.wizard-buttons{display:flex;gap:8px}
+.recommend-header{background:var(--ink);color:var(--paper);padding:20px 24px;margin-bottom:20px;border:1px solid var(--ink);box-shadow:5px 5px 0 var(--gold)}
+.recommend-header h3{font-family:'Shippori Mincho',serif;font-size:20px;font-weight:800;margin-bottom:8px}
+.recommend-header .summary{font-size:12px;line-height:1.7;color:rgba(255,255,255,.85)}
+.recommend-header .summary strong{color:var(--gold)}
+.recommend-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.recommend-actions button{background:transparent;color:var(--paper);border-color:var(--paper);padding:6px 14px;font-size:12px}
+.recommend-actions button:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.forecast-intro{display:flex;align-items:baseline;gap:14px;margin:28px 0 14px;border-bottom:1px solid var(--line);padding-bottom:8px;flex-wrap:wrap}
+.forecast-intro h2{font-family:'Shippori Mincho',serif;font-weight:800;font-size:22px}
+.forecast-intro h2 .num{color:var(--red);font-family:'JetBrains Mono',monospace;font-size:18px;margin-right:5px}
+.forecast-intro .stamp{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);margin-left:auto}
+.intensity-map{display:grid;grid-template-columns:140px repeat(12,1fr);gap:2px;margin-bottom:16px;border:1px solid var(--ink);background:var(--ink)}
+.imap-cell{background:var(--paper);padding:7px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;text-align:center;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.imap-cell .w-icon{font-size:16px;line-height:1}
+.imap-cell .w-label{font-size:9px;font-family:'Shippori Mincho',serif;font-weight:700}
+.imap-header{font-weight:700;min-height:30px;flex-direction:row}
+.imap-row-label{font-size:11px;text-align:left;padding-left:9px;justify-content:flex-start;font-weight:500;background:var(--paper-dark);flex-direction:row}
+.imap-cell.w-rain{background:var(--w-rain);color:#fff}
+.imap-cell.w-cloud{background:var(--w-cloud);color:var(--ink)}
+.imap-cell.w-sun{background:var(--w-sun);color:var(--ink)}
+.imap-cell.w-rainbow{background:linear-gradient(135deg,#e85d3a 0%,#f5d97a 35%,#88c97a 65%,#5db0e0 100%);color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.imap-cell.current{outline:2px solid var(--red);outline-offset:-2px}
+.legend{display:flex;gap:12px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);flex-wrap:wrap;padding:10px 12px;background:rgba(255,255,255,.4);border:1px solid var(--line)}
+.legend-title{font-weight:700;color:var(--ink)}
+.legend-item{display:inline-flex;align-items:center;gap:5px}
+.legend-swatch{width:20px;height:20px;border:1px solid var(--ink);display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.sort-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:9px 12px;background:rgba(255,255,255,.5);border:1px solid var(--line);flex-wrap:wrap}
+.sort-bar label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft)}
+.sort-bar select{padding:5px 9px;font-size:13px;width:auto;min-width:170px;height:auto}
+.forecast-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.card{background:rgba(255,255,255,.5);border:1px solid var(--ink);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.card.match-strong{border-width:2px;border-color:var(--red);box-shadow:4px 4px 0 var(--gold)}
+.card-stripe{height:5px;background:var(--ink)}
+.card.type-discount .card-stripe{background:var(--red-deep)}
+.card.type-points .card-stripe{background:var(--purple)}
+.card.type-payback .card-stripe{background:var(--teal)}
+.card.type-clearance .card-stripe{background:var(--red)}
+.card.type-member .card-stripe{background:var(--gold)}
+.card-body{padding:16px 18px 14px;flex:1;display:flex;flex-direction:column}
+.card-header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.card-headline{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;line-height:1}
+.card-headline .unit{font-size:14px;font-weight:700;margin-left:2px}
+.card.type-discount .card-headline{color:var(--red-deep)}
+.card.type-points .card-headline{color:var(--purple)}
+.card.type-payback .card-headline{color:var(--teal)}
+.card.type-clearance .card-headline{color:var(--red)}
+.card.type-member .card-headline{color:var(--gold)}
+.card-when{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);text-align:right;flex-shrink:0}
+.card-when strong{display:block;font-size:13px;color:var(--ink);margin-top:2px}
+.card-type-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;margin-bottom:6px;border:1px solid currentColor}
+.card.type-discount .card-type-badge{color:var(--red-deep)}
+.card.type-points .card-type-badge{color:var(--purple)}
+.card.type-payback .card-type-badge{color:var(--teal)}
+.card.type-clearance .card-type-badge{color:var(--red)}
+.card.type-member .card-type-badge{color:var(--gold)}
+.match-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;margin-bottom:6px;margin-left:4px;background:var(--gold);color:var(--ink);border:1px solid var(--gold)}
+.alwayson-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;margin-bottom:6px;margin-left:4px;background:var(--teal);color:var(--paper);border:1px solid var(--teal)}
+.alwayson-badge::before{content:'∞ '}
+.synergy-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;margin-bottom:6px;margin-left:4px;background:var(--green);color:var(--paper);border:1px solid var(--green)}
+.synergy-badge::before{content:'⚡ '}
+.card-retailer{font-family:'Shippori Mincho',serif;font-size:17px;font-weight:700}
+.card-event{font-family:'Shippori Mincho',serif;font-size:14px;color:var(--red-deep);margin-bottom:10px;font-weight:500}
+.card-detail{font-size:12px;line-height:1.65;color:var(--ink-soft);margin-bottom:8px}
+.card-trend{margin:8px 0;padding:7px 9px;border-left:3px solid var(--green);background:rgba(61,107,58,.06);font-size:11px;line-height:1.6;color:var(--ink)}
+.card-trend::before{content:'【傾向】';font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;color:var(--green);margin-right:4px}
+.card-synergy{margin:6px 0;padding:7px 9px;border-left:3px solid var(--gold);background:rgba(184,137,59,.08);font-size:11px;line-height:1.6;color:var(--ink)}
+.card-synergy::before{content:'【相乗効果】';font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;color:var(--gold);margin-right:4px}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;background:var(--paper-dark);color:var(--ink);border:1px solid var(--line)}
+.tag.cat{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tag.region{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+.tag.subgroup{background:var(--teal);color:var(--paper);border-color:var(--teal)}
+.card-banners{margin-top:8px;padding-top:10px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:5px}
+.card-banners-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-soft);width:100%;margin-bottom:3px}
+.banner-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 9px 4px 5px;background:var(--purple);color:var(--paper);border:1px solid var(--purple);font-family:'Noto Sans JP',sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+.banner-btn:hover{background:var(--ink);border-color:var(--ink)}
+.banner-btn::before{content:'💳';font-size:11px;filter:grayscale(1) brightness(2)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(20,18,12,.65);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--paper);max-width:540px;width:100%;max-height:85vh;overflow-y:auto;border:1px solid var(--ink);box-shadow:8px 8px 0 var(--ink-soft)}
+.modal-header{background:var(--ink);color:var(--paper);padding:13px 18px;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-family:'Shippori Mincho',serif;font-size:18px;font-weight:800}
+.modal-close{background:transparent;color:var(--paper);border:1px solid var(--paper);padding:3px 9px;font-size:12px;font-family:'JetBrains Mono',monospace;cursor:pointer}
+.modal-close:hover{background:var(--red);border-color:var(--red)}
+.modal-body{padding:18px 22px 22px}
+.modal-section{margin-bottom:16px}
+.modal-section-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);font-weight:700;margin-bottom:5px}
+.modal-section-label::before{content:'◆ '}
+.modal-section-content{font-size:13px;line-height:1.7;color:var(--ink)}
+.modal-section-content ul{padding-left:18px;margin-top:3px}
+.modal-section-content li{margin-bottom:3px}
+.modal-rate{background:rgba(107,74,122,.08);border-left:3px solid var(--purple);padding:9px 12px;margin-top:6px;font-size:12px;line-height:1.6}
+.empty{grid-column:1/-1;padding:50px 18px;text-align:center;border:1px dashed var(--line);color:var(--ink-soft);font-family:'Shippori Mincho',serif;font-size:15px}
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--ink);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);line-height:1.7}
+footer strong{color:var(--red)}
+@media(max-width:720px){
+.intensity-map{grid-template-columns:88px repeat(12,1fr)}
+.imap-cell{padding:4px 2px;min-height:38px}
+.imap-cell .w-icon{font-size:13px}
+.imap-cell .w-label{display:none}
+.imap-row-label{padding-left:5px;font-size:10px}
+.brand{font-size:30px}
+.container{padding:22px 12px 50px}
+.mode-tab,.ver-tab{font-size:12px;padding:9px 6px}
+.wizard{padding:22px 16px}
+.wizard-question{font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<div class="masthead">
+<div>
+<div class="brand">お買い得<span class="accent">予報</span></div>
+<div class="meta-strip">
+<span id="todayStamp">本日 ----/--/--</span>
+<span>全国セール気象台 発行</span>
+<span>第 <span id="issueNo">001</span> 号</span>
+</div>
+</div>
+<div class="subtitle">SALE FORECAST<br>WEATHER OBSERVATORY<br>v0.9</div>
+</div>
+<p class="tagline">お得情報を「雨〜虹」の天気予報メタファーで予報。通常版・楽器版・家具版から選んで、必要な情報を一目で確認できます。</p>
+</header>
+<div class="version-selector" id="versionSelector">
+<button class="ver-tab active" data-version="general">🏬 通常版</button>
+<button class="ver-tab" data-version="instrument">🎸 楽器版</button>
+<button class="ver-tab" data-version="furniture">🛋️ 家具版</button>
+</div>
+<div class="mode-tabs">
+<button class="mode-tab active" data-mode="normal"><span class="tab-num">01</span>通常モード</button>
+<button class="mode-tab" data-mode="recommend"><span class="tab-num">02</span>おすすめ情報モード</button>
+</div>
+<div class="mode-content active" id="mode-normal">
+<section class="filters">
+<div class="filter-grid">
+<div class="field"><label>地方エリア</label><select id="filterRegion"><option value="all">全国 (指定なし)</option><option value="hokkaido">北海道</option><option value="tohoku">東北</option><option value="kanto">関東</option><option value="chubu">中部・東海</option><option value="kansai">関西</option><option value="chugoku">中国</option><option value="shikoku">四国</option><option value="kyushu">九州・沖縄</option></select></div>
+<div class="field"><label>都道府県</label><select id="filterPrefecture"><option value="all">すべての都道府県</option></select></div>
+<div class="field"><label>施策タイプ</label><select id="filterType"><option value="all">すべての施策</option><option value="discount">割引 (○%OFF)</option><option value="points">ポイント倍増 (○倍)</option><option value="payback">ペイバック</option><option value="clearance">クリアランス</option><option value="member">カード会員限定</option></select></div>
+<div class="field"><label>購入希望時期 (開始)</label><input type="month" id="filterFrom"></div>
+<div class="field"><label>購入希望時期 (終了)</label><input type="month" id="filterTo"></div>
+<div class="field"><label>店舗グループ</label><select id="filterRetailer"><option value="all">すべて</option></select></div>
+<div class="field"><label>カード種別</label><select id="filterCard"><option value="all">すべてのカード</option></select></div>
+</div>
+<div class="filter-actions"><button id="applyBtn">予報を更新</button><button id="resetBtn" class="secondary">条件リセット</button></div>
+</section>
+<div class="forecast-intro"><h2><span class="num">01</span>年間お買い得天気図</h2><span class="stamp">12-MONTH WEATHER FORECAST</span></div>
+<div class="intensity-map" id="intensityMap"></div>
+<div class="legend">
+<span class="legend-title">天気記号 ▶</span>
+<span class="legend-item"><span class="legend-swatch" style="background:#7a8b9c;color:#fff">☂</span>雨 (静穏)</span>
+<span class="legend-item"><span class="legend-swatch" style="background:#c7b89e">☁</span>曇り (小)</span>
+<span class="legend-item"><span class="legend-swatch" style="background:#f5d97a">☀</span>晴れ (中)</span>
+<span class="legend-item"><span class="legend-swatch" style="background:linear-gradient(135deg,#e85d3a,#f5d97a,#88c97a,#5db0e0);color:#fff">🌈</span>虹 (大お得)</span>
+<span class="legend-item">※ 虹の月は最大級のお買い得機会</span>
+</div>
+<div class="forecast-intro"><h2><span class="num">02</span>予報詳細</h2><span class="stamp">DETAILED · <span id="cardCount">0</span> 件</span></div>
+<div class="sort-bar"><label>並び替え:</label><select id="sortBy"><option value="date_asc">時期が近い順</option><option value="date_desc">時期が遠い順</option><option value="value_desc">お得度が高い順</option><option value="value_asc">お得度が低い順</option><option value="retailer">店舗グループ別</option></select></div>
+<div class="forecast-list" id="forecastList"></div>
+</div>
+<div class="mode-content" id="mode-recommend">
+<div class="wizard" id="wizardPanel">
+<div class="wizard-progress" id="wizardProgress"></div>
+<div class="wizard-step active" data-step="0"><div class="wizard-step-num">QUESTION 01 / 06</div><div class="wizard-question">よく使う支払い方法は？</div><div class="wizard-hint">お持ちのクレジットカードや使うコード決済を選んでください (複数選択可)</div><div class="wizard-options" data-key="cards" data-multi="true"></div></div>
+<div class="wizard-step" data-step="1"><div class="wizard-step-num">QUESTION 02 / 06</div><div class="wizard-question">お住まいはどの地方ですか？</div><div class="wizard-hint">該当する地方を一つ選択。「全国」を選ぶとEC・全国チェーンが優先されます。</div><div class="wizard-options" data-key="region" data-multi="false">
+<button class="wizard-option single-only" data-val="all"><span class="checkbox"></span><span class="opt-label">全国・指定なし<span class="opt-sub">EC・全国チェーン優先</span></span></button>
+<button class="wizard-option single-only" data-val="hokkaido"><span class="checkbox"></span><span class="opt-label">北海道<span class="opt-sub">札幌・函館 等</span></span></button>
+<button class="wizard-option single-only" data-val="tohoku"><span class="checkbox"></span><span class="opt-label">東北<span class="opt-sub">仙台・盛岡 等</span></span></button>
+<button class="wizard-option single-only" data-val="kanto"><span class="checkbox"></span><span class="opt-label">関東<span class="opt-sub">東京・神奈川・千葉・埼玉</span></span></button>
+<button class="wizard-option single-only" data-val="chubu"><span class="checkbox"></span><span class="opt-label">中部・東海<span class="opt-sub">名古屋・静岡・新潟</span></span></button>
+<button class="wizard-option single-only" data-val="kansai"><span class="checkbox"></span><span class="opt-label">関西<span class="opt-sub">大阪・京都・神戸</span></span></button>
+<button class="wizard-option single-only" data-val="chugoku"><span class="checkbox"></span><span class="opt-label">中国<span class="opt-sub">広島・岡山 等</span></span></button>
+<button class="wizard-option single-only" data-val="shikoku"><span class="checkbox"></span><span class="opt-label">四国<span class="opt-sub">高松・松山 等</span></span></button>
+<button class="wizard-option single-only" data-val="kyushu"><span class="checkbox"></span><span class="opt-label">九州・沖縄<span class="opt-sub">福岡・熊本・鹿児島</span></span></button>
+</div></div>
+<div class="wizard-step" data-step="2"><div class="wizard-step-num">QUESTION 03 / 06</div><div class="wizard-question">どんな施策に興味がありますか？</div><div class="wizard-hint">気になる施策タイプを選んでください (複数選択可)</div><div class="wizard-options" data-key="types" data-multi="true">
+<button class="wizard-option" data-val="discount"><span class="checkbox"></span><span class="opt-label">割引<span class="opt-sub">○%OFFなど即時値引き</span></span></button>
+<button class="wizard-option" data-val="points"><span class="checkbox"></span><span class="opt-label">ポイント倍増<span class="opt-sub">○倍・○%還元</span></span></button>
+<button class="wizard-option" data-val="payback"><span class="checkbox"></span><span class="opt-label">ペイバック<span class="opt-sub">商品券・キャッシュバック</span></span></button>
+<button class="wizard-option" data-val="clearance"><span class="checkbox"></span><span class="opt-label">クリアランス<span class="opt-sub">夏冬の在庫処分</span></span></button>
+<button class="wizard-option" data-val="member"><span class="checkbox"></span><span class="opt-label">会員限定招待<span class="opt-sub">百貨店招待会など</span></span></button>
+</div></div>
+<div class="wizard-step" data-step="3"><div class="wizard-step-num">QUESTION 04 / 06</div><div class="wizard-question">どの店舗グループを使いますか？</div><div class="wizard-hint">よく利用する店舗グループを選んでください (複数選択可)</div><div class="wizard-options" data-key="retailers" data-multi="true"></div></div>
+<div class="wizard-step" data-step="4"><div class="wizard-step-num">QUESTION 05 / 06</div><div class="wizard-question">何を重視しますか？</div><div class="wizard-hint">優先したいポイントを一つ選択。マッチング基準が変わります。</div><div class="wizard-options" data-key="priority" data-multi="false">
+<button class="wizard-option single-only" data-val="balanced"><span class="checkbox"></span><span class="opt-label">バランス重視<span class="opt-sub">まんべんなく評価</span></span></button>
+<button class="wizard-option single-only" data-val="value"><span class="checkbox"></span><span class="opt-label">価格優先<span class="opt-sub">割引率が高いものを優先</span></span></button>
+<button class="wizard-option single-only" data-val="convenience"><span class="checkbox"></span><span class="opt-label">利便性優先<span class="opt-sub">自分のカード・地域優先</span></span></button>
+<button class="wizard-option single-only" data-val="urgent"><span class="checkbox"></span><span class="opt-label">直近の即効性<span class="opt-sub">今すぐ使えるもの</span></span></button>
+</div></div>
+<div class="wizard-step" data-step="5"><div class="wizard-step-num">QUESTION 06 / 06</div><div class="wizard-question">いつ頃の購入を予定？</div><div class="wizard-hint">直近で買いたい時期を選んでください</div><div class="wizard-options" data-key="timing" data-multi="false">
+<button class="wizard-option single-only" data-val="now"><span class="checkbox"></span><span class="opt-label">すぐ買いたい<span class="opt-sub">今〜1ヶ月以内</span></span></button>
+<button class="wizard-option single-only" data-val="soon"><span class="checkbox"></span><span class="opt-label">2〜3ヶ月以内<span class="opt-sub">少し待てる</span></span></button>
+<button class="wizard-option single-only" data-val="halfyear"><span class="checkbox"></span><span class="opt-label">半年以内<span class="opt-sub">余裕がある</span></span></button>
+<button class="wizard-option single-only" data-val="anytime"><span class="checkbox"></span><span class="opt-label">時期を問わない<span class="opt-sub">通年情報</span></span></button>
+</div></div>
+<div class="wizard-nav"><span class="wizard-nav-info" id="wizardStepInfo">STEP 1 / 6</span><div class="wizard-buttons"><button class="secondary" id="wizardPrev" disabled>← 戻る</button><button id="wizardNext">次へ →</button></div></div>
+</div>
+<div id="recommendResults" style="display:none">
+<div class="recommend-header" id="recommendHeader"></div>
+<div class="sort-bar"><label>並び替え:</label><select id="sortByRec"><option value="match_desc">マッチ度が高い順</option><option value="date_asc">時期が近い順</option><option value="value_desc">お得度が高い順</option></select></div>
+<div class="forecast-list" id="recommendList"></div>
+</div>
+</div>
+<footer><p>本予報は各社の<strong>過去の恒例セール・決算月・ポイント施策の公知パターン</strong>に基づく予測です。「傾向」欄に過去実績、「相乗効果」欄にSC販促との組み合わせ情報を記載。実購入時は各社公式情報をご確認ください。</p><p>データソース: 各社IR情報・公式告知 (内蔵) / プロトタイプ版 v0.9</p></footer>
+</div>
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal"><div class="modal-header"><h3 id="modalTitle">カード詳細</h3><button class="modal-close" id="modalClose">閉じる ×</button></div><div class="modal-body" id="modalBody"></div></div></div>
+<script>
+const PREFECTURES={hokkaido:['北海道'],tohoku:['青森県','岩手県','宮城県','秋田県','山形県','福島県'],kanto:['茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県'],chubu:['新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県'],kansai:['三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県'],chugoku:['鳥取県','島根県','岡山県','広島県','山口県'],shikoku:['徳島県','香川県','愛媛県','高知県'],kyushu:['福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県']};
+const PREFECTURE_TO_REGION={};Object.entries(PREFECTURES).forEach(([r,ps])=>ps.forEach(p=>PREFECTURE_TO_REGION[p]=r));
+const REGION_LABEL={hokkaido:'北海道',tohoku:'東北',kanto:'関東',chubu:'中部・東海',kansai:'関西',chugoku:'中国',shikoku:'四国',kyushu:'九州・沖縄'};
+const TYPE_LABEL={discount:'割引',points:'ポイント倍増',payback:'ペイバック',clearance:'クリアランス',member:'カード会員限定'};
+const WEATHER={rain:{icon:'☂',label:'雨'},cloud:{icon:'☁',label:'曇り'},sun:{icon:'☀',label:'晴れ'},rainbow:{icon:'🌈',label:'虹'}};
+function valueToWeather(s){if(s>=75)return'rainbow';if(s>=50)return'sun';if(s>=25)return'cloud';return'rain'}
+const ALL_PREFS=Object.values(PREFECTURES).flat();
+const K=PREFECTURES.kanto,T=PREFECTURES.tohoku,KS=PREFECTURES.kansai;
+
+const CARD_DETAILS={
+aeon_card:{name:'イオンカード',issuer:'イオンFS',baseRate:'0.5%',annualFee:'無料',primaryUse:'イオン・OPA',keyBenefits:['毎月20・30日 5%OFF','毎月10日 AEON Pay 10倍','55歳以上 毎月15日 5%OFF'],notes:'OPA系商業施設も対象。'},
+jq_card:{name:'JQ CARD',issuer:'JR九州',baseRate:'0.5%',annualFee:'初年度無料・1,375円',primaryUse:'アミュプラザ',keyBenefits:['JR博多シティ365日5%OFF','館別曜日特典','プレミアムデイズ10%OFF'],notes:'2026年5月22-26日アミュエスト博多でプレミアムデイズ開催。'},
+mi_card:{name:'エムアイカード',issuer:'三越伊勢丹',baseRate:'0.5-1%',annualFee:'無料 (プラス2,200円)',primaryUse:'三越・伊勢丹',keyBenefits:['基本5%、年間で最大10%','プラチナ常時10%','感謝祭・招待会'],notes:'年間利用額でステージ昇格。'},
+takashimaya:{name:'タカシマヤカード',issuer:'高島屋FP',baseRate:'1% / 高島屋8-10%',annualFee:'2,200円',primaryUse:'高島屋',keyBenefits:['高島屋で1-10%','初年度8%','春秋ポイントアップ+2%'],notes:'食品・特価品は対象外。'},
+daimaru:{name:'大丸松坂屋カード',issuer:'JFRカード',baseRate:'5%',annualFee:'1,100円',primaryUse:'大丸・松坂屋',keyBenefits:['大丸・松坂屋で5%還元','ポイントアップdaysで+1%'],notes:'特価品・食品は1%。'},
+persona:{name:'ペルソナSTACIAカード',issuer:'阪急阪神/SMBC',baseRate:'5-10%',annualFee:'2,200円',primaryUse:'阪急・阪神百貨店',keyBenefits:['基本5%、30万で7%、50万で10%','早期ランクアップ'],notes:'積算期間1/16〜翌年1/15。'},
+epos:{name:'エポスカード',issuer:'丸井',baseRate:'0.5%',annualFee:'無料',primaryUse:'マルイ・モディ',keyBenefits:['マルコとマルオ10%OFF年4回','店内無印良品も10%OFF','即日発行可'],notes:'JQエポスなど提携カードあり。'},
+lumine:{name:'ルミネカード',issuer:'JR東日本',baseRate:'0.5%',annualFee:'1,048円',primaryUse:'ルミネ・ニュウマン',keyBenefits:['通年5%OFF','年4回10%OFF (3/5/9/11月)','Suicaチャージ1.5%'],notes:'2026年5月10%OFFは5/14-5/20。'},
+jre_card:{name:'JRE CARD',issuer:'JR東日本',baseRate:'0.5%',annualFee:'524円',primaryUse:'アトレ・エキュート 等',keyBenefits:['駅ビル3.5%還元','月末ごほうび','Suicaチャージ1.5%'],notes:'駅ビル特化型ビューカード。'},
+jr_tower:{name:'JRタワースクエアカード',issuer:'JRタワー',baseRate:'1%',annualFee:'1,100円',primaryUse:'JRタワー (札幌ステラ)',keyBenefits:['年2回ごばポ5倍','現金時の2倍','T38展望200円OFF'],notes:'2025年春は3/19-3/24開催。'},
+parco_card:{name:'PARCOカード',issuer:'パルコ/セゾン',baseRate:'0.5-2%',annualFee:'無料',primaryUse:'PARCO各館',keyBenefits:['PARTY SALE 5%OFF年5回','3〜7ポイント','グランバザール先行'],notes:'クラスSは年20万で自動昇格。'},
+nimoca:{name:'nimoca',issuer:'西日本鉄道',baseRate:'0.5%',annualFee:'無料',primaryUse:'西鉄系・福岡天神',keyBenefits:['ソラリア・ミーナで還元','九州内交通機関'],notes:'福岡都市圏での日常利用。'},
+lucua:{name:'LUCUAメンバーズ',issuer:'JR西日本',baseRate:'約1%',annualFee:'無料',primaryUse:'ルクア大阪',keyBenefits:['5倍キャンペーンで5%還元','J-WEST併用最大11倍相当'],notes:'2026年5月は5月中旬5日間予想。'},
+iwataya:{name:'岩田屋三越カード',issuer:'三越伊勢丹',baseRate:'5-10%',annualFee:'2,200円',primaryUse:'岩田屋・福岡三越',keyBenefits:['福岡で5-10%還元','感謝祭・招待会'],notes:'エムアイカードの福岡版。'},
+amazon_card:{name:'Amazon Mastercard',issuer:'三井住友カード',baseRate:'1%',annualFee:'無料',primaryUse:'Amazon.co.jp',keyBenefits:['Amazon 1.5% (プライム2%)','BFで+4%','コンビニ1.5%'],notes:'即日審査。'},
+rakuten:{name:'楽天カード',issuer:'楽天カード',baseRate:'1%',annualFee:'無料',primaryUse:'楽天市場',keyBenefits:['SPU最大16倍','5と0のつく日4倍','スーパーセール大量還元','BF楽器店は最大44.5倍'],notes:'ゴールドはSPU倍率アップ。'},
+paypay:{name:'PayPayカード',issuer:'PayPayカード',baseRate:'1%',annualFee:'無料',primaryUse:'Yahoo!ショッピング',keyBenefits:['Yahoo!最大5%','PayPayステップ','超PayPay祭'],notes:'2026年3月よりVポイント相互交換。'},
+zozo:{name:'ZOZOCARD',issuer:'ZOZO',baseRate:'1%',annualFee:'無料',primaryUse:'ZOZOTOWN',keyBenefits:['ZOZO 5%還元','即時ポイント利用'],notes:'ZOZOTOWN以外1%。'},
+tokyu:{name:'TOKYU CARD',issuer:'東急カード',baseRate:'1%',annualFee:'1,100円',primaryUse:'東急百貨店・ストア',keyBenefits:['東急百貨店3-10%','東急ストア毎月3/13/23日3倍','PASMO 1%'],notes:'渋谷・自由が丘等。'},
+odakyu:{name:'OPカード',issuer:'小田急/セゾン',baseRate:'0.5%',annualFee:'500円〜',primaryUse:'小田急百貨店',keyBenefits:['小田急百貨店5-10%','PASMO 1%','ロマンスカー5%'],notes:'新宿・町田・藤沢など。'},
+keio:{name:'京王パスポートカード',issuer:'京王',baseRate:'1%',annualFee:'262円〜',primaryUse:'京王百貨店',keyBenefits:['京王百貨店5-10%','アートマン5%'],notes:'京王沿線。'},
+seibu:{name:'SEIBU PRINCE CLUB',issuer:'プリンス/セゾン',baseRate:'0.5-1%',annualFee:'無料',primaryUse:'西武・そごう',keyBenefits:['西武・そごう還元','プリンス系優待'],notes:'池袋・横浜そごう等。'},
+kintetsu:{name:'KIPSカード',issuer:'近鉄/セゾン',baseRate:'0.5-1%',annualFee:'無料〜',primaryUse:'近鉄・ハルカス',keyBenefits:['近鉄百貨店5-10%','ハルカスで還元'],notes:'阿倍野・奈良・名張・四日市等。'},
+dcard:{name:'dカード/GOLD',issuer:'NTTドコモ',baseRate:'1%',annualFee:'無料/GOLD 11,000円',primaryUse:'マツキヨ・スタバ・高島屋',keyBenefits:['特約店で還元アップ (スタバ3%)','d払い+dカードで二重取り','ポイントアップ祭年4-6回','GOLDはドコモ料金10%'],notes:'2026年5月実績: 5/20-5/25。'},
+vpoint:{name:'三井住友/Olive',issuer:'三井住友/SMBC',baseRate:'0.5%',annualFee:'無料 (NL系)〜',primaryUse:'コンビニ・SBI・Olive',keyBenefits:['対象店スマホタッチで最大10%','Oliveランクで還元アップ','クレカ積立最大3%','Vポイント・PayPay相互交換'],notes:'2026年3月開始。'},
+mufg:{name:'三菱UFJ/DC/NICOS',issuer:'三菱UFJニコス',baseRate:'0.5%',annualFee:'無料〜',primaryUse:'コンビニ・スタバ',keyBenefits:['対象店で最大20倍','楽Pay新規2,000円','タッチ決済+対象店15%'],notes:'通年で抽選企画。'},
+jcb:{name:'JCBカード',issuer:'JCB',baseRate:'0.5%',annualFee:'無料 (W系)〜',primaryUse:'JCB加盟店',keyBenefits:['ORIGINAL SERIESパートナー2-10倍','CARD Wは39歳以下常時2倍','Oki Doki→J-POINT'],notes:'プラチナは招待制。'},
+shimamura_app:{name:'島村楽器アプリ会員 (音マイレージ)',issuer:'島村楽器',baseRate:'0.5%',annualFee:'無料',primaryUse:'島村楽器各店',keyBenefits:['200円(税抜)で1マイル','メーカー保証後の修理割引','スタジオ等の利用でもマイル付与'],notes:'シマムラミュージックカード(最大36回無金利)と併用可。'},
+imc:{name:'IMCカード',issuer:'イシバシ楽器',baseRate:'1%',annualFee:'無料',primaryUse:'イシバシ楽器',keyBenefits:['購入時ポイント加算','買取時もポイント加算 (希少)','アプリ提示も可'],notes:'楽器売買頻度の高い人向け。'},
+ikebe_club:{name:'イケベミュージッククラブ',issuer:'イケベ楽器',baseRate:'変動',annualFee:'無料',primaryUse:'イケベ楽器',keyBenefits:['会員ポイント加算','BFポイントUP','楽天市場店でポイント別途加算'],notes:'旧プレミアムポイントカードを統合。'},
+yamano_point:{name:'ヤマノミュージックポイント',issuer:'山野楽器',baseRate:'1%',annualFee:'無料',primaryUse:'山野楽器',keyBenefits:['CD/DVD/楽譜/書籍で1%','100ptで100円のお買物券'],notes:'楽器本体は対象外の場合あり。'},
+mitsui_card:{name:'三井ショッピングパークカード《セゾン》',issuer:'三井不動産/セゾン',baseRate:'0.5%',annualFee:'無料',primaryUse:'ららぽーと・三井OUT・エキスポシティ',keyBenefits:['通常2%、特別ポイントアップ時2-3倍','年4回程度のカード会員ポイントアップ','アプリde支払い対応'],notes:'楽器店・家具店がテナント出店時、SC全体のキャンペーンが効く。'},
+nitori_app:{name:'ニトリアプリ会員',issuer:'ニトリ',baseRate:'約1%',annualFee:'無料',primaryUse:'ニトリ・デコホーム・島忠ホームズ',keyBenefits:['ポイント2倍 (通常の)','入会14日以内3,000円購入で500pt','春のポイント還元最大7,700pt','創業祭時は大型家具1.5倍'],notes:'楽天市場店との二重取りも可能。'},
+ikea_family:{name:'IKEA Family',issuer:'IKEA',baseRate:'-',annualFee:'無料',primaryUse:'IKEA',keyBenefits:['メンバー限定価格','先行セール','誕生月クーポン','オープン1時間ドリンクバー無料 (一部除く)'],notes:'年1回以上来店なら必須。'}
+};
+
+/* ===== 通常版 EVENTS ===== */
+const GENERAL_EVENTS=[
+{id:'a1',group:'aeon',subgroup:'イオン',name:'イオンカード',event:'お客さま感謝デー',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'毎月20・30日にイオンカード払いで5%OFF。',trend:'長年継続の通年施策。',cardTypes:['aeon_card'],prefectures:'all'},
+{id:'a2',group:'aeon',subgroup:'イオン',name:'イオンカード',event:'毎月10日 ありが10デー',type:'points',headline:'10',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'毎月10日はAEON Payでポイント10倍。',trend:'',cardTypes:['aeon_card'],prefectures:'all'},
+{id:'a3',group:'aeon',subgroup:'イオン',name:'イオン',event:'決算前セール (2月)',type:'clearance',headline:'最大半額',headlineUnit:'',months:[2],valueScore:55,detail:'本決算(2月期)に向けた在庫一掃。',trend:'過去複数年、2月は値引き拡大。',cardTypes:['aeon_card'],prefectures:'all'},
+{id:'a4',group:'aeon',subgroup:'イオン',name:'イオン',event:'ブラックフライデー',type:'discount',headline:'最大半額',headlineUnit:'',months:[11],valueScore:55,detail:'11月下旬の大型セール。',trend:'2019年以降毎年11月下旬。',cardTypes:['aeon_card'],prefectures:'all'},
+{id:'a5',group:'aeon',subgroup:'OPA',name:'OPA各館',event:'GW・連休 ポイント10倍',type:'points',headline:'10',headlineUnit:'倍',months:[5],valueScore:50,detail:'AEON Pay/イオンカードでWAON POINT 10倍。',trend:'2025年5月GWに河原町・八王子で5/2-5/6開催。',cardTypes:['aeon_card'],prefectures:['北海道','宮城県','東京都','神奈川県','千葉県','埼玉県','静岡県','福井県','京都府','大阪府','広島県']},
+{id:'a6',group:'aeon',subgroup:'OPA',name:'OPA各館',event:'BF期間 ポイント10倍',type:'points',headline:'10',headlineUnit:'倍',months:[11],valueScore:55,detail:'11月BFと連動。',trend:'例年11月下旬の金〜月。',cardTypes:['aeon_card'],prefectures:['北海道','宮城県','東京都','神奈川県','千葉県','埼玉県','静岡県','福井県','京都府','大阪府','広島県']},
+{id:'p1',group:'parco_marui',subgroup:'パルコ',name:'パルコ',event:'グランバザール (夏)',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[7],valueScore:80,detail:'パルコ最大級の夏セール。',trend:'毎年7月上旬〜中旬に全国一斉。',cardTypes:['parco_card'],prefectures:'all'},
+{id:'p2',group:'parco_marui',subgroup:'パルコ',name:'パルコ',event:'グランバザール (新春)',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[1],valueScore:80,detail:'1月初旬〜中旬の大型クリアランス。',trend:'2026年は1/2〜1/12に開催実績。',cardTypes:['parco_card'],prefectures:'all'},
+{id:'p3',group:'parco_marui',subgroup:'パルコ',name:'パルコ',event:'PARTY SALE',type:'discount',headline:'5%',headlineUnit:'OFF',months:[3,5,9,11,12],valueScore:30,detail:'PARCOカード会員5%OFF。',trend:'過去3年、年5回開催。',cardTypes:['parco_card'],prefectures:'all'},
+{id:'p4',group:'parco_marui',subgroup:'マルイ',name:'マルイ・モディ',event:'マルコとマルオの10日間',type:'discount',headline:'10%',headlineUnit:'OFF',months:[3,5,9,11],valueScore:70,detail:'エポスカード払いで10%OFF。店内の無印良品も対象。',trend:'年4回・3/5/9/11月のパターンが長年定番。',cardTypes:['epos'],prefectures:[...K,...KS,...PREFECTURES.chubu,'福岡県']},
+{id:'p5',group:'parco_marui',subgroup:'ルミネ',name:'ルミネ・ニュウマン',event:'ルミネカード 10%OFF',type:'discount',headline:'10%',headlineUnit:'OFF',months:[3,5,9,11],valueScore:70,detail:'ルミネカード払いで通常5%が10%OFFに。',trend:'2003年以降毎年4回開催。2026年5月は5/14-5/20。',cardTypes:['lumine'],prefectures:[...K]},
+{id:'p6',group:'parco_marui',subgroup:'ルミネ',name:'ルミネ・ニュウマン',event:'ルミネカード 通年5%OFF',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'ルミネカードで通年5%OFF。',trend:'',cardTypes:['lumine'],prefectures:[...K]},
+{id:'p7',group:'parco_marui',subgroup:'ルミネ',name:'ルミネ・ニュウマン',event:'ルミネ・ザ・バーゲン',type:'clearance',headline:'大幅',headlineUnit:'値下げ',months:[1,7],valueScore:75,detail:'年2回の大型バーゲン。',trend:'夏は7月中旬、冬は1月上旬。',cardTypes:['lumine'],prefectures:[...K]},
+{id:'e1',group:'ekibiru',subgroup:'JRE CARD',name:'JRE CARD',event:'駅ビルで3.5%還元',type:'points',headline:'3.5%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,detail:'アトレ・エキュート・グランデュオ等で常時3.5%還元。',trend:'',cardTypes:['jre_card'],prefectures:[...K,...T]},
+{id:'e2',group:'ekibiru',subgroup:'アトレ',name:'アトレ各館',event:'夏のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:70,detail:'品川・上野・大森・吉祥寺等の夏クリアランス。',trend:'例年6月末〜7月。',cardTypes:['jre_card'],prefectures:[...K]},
+{id:'e3',group:'ekibiru',subgroup:'アトレ',name:'アトレ各館',event:'冬のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[12,1],valueScore:70,detail:'年末年始の冬クリアランス。',trend:'',cardTypes:['jre_card'],prefectures:[...K]},
+{id:'e4',group:'ekibiru',subgroup:'グランデュオ',name:'グランデュオ立川・蒲田',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:70,detail:'立川・蒲田の夏冬クリアランス。',trend:'',cardTypes:['jre_card'],prefectures:['東京都']},
+{id:'e5',group:'ekibiru',subgroup:'エキュート',name:'エキュート品川・上野・大宮・立川・東京',event:'季節セール',type:'clearance',headline:'値下げ',headlineUnit:'多数',months:[6,7,12,1],valueScore:55,detail:'エキュート各館の季節セール。',trend:'',cardTypes:['jre_card'],prefectures:[...K]},
+{id:'e6',group:'ekibiru',subgroup:'エスパル',name:'エスパル仙台・福島・郡山・盛岡(フェザン)',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:70,detail:'東北地区JR駅ビルの夏冬クリアランス。',trend:'',cardTypes:['jre_card'],prefectures:[...T]},
+{id:'e7',group:'ekibiru',subgroup:'東急',name:'東急百貨店・東急プラザ',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:75,detail:'渋谷・吉祥寺・たまプラーザ等。',trend:'',cardTypes:['tokyu'],prefectures:['東京都','神奈川県']},
+{id:'e8',group:'ekibiru',subgroup:'東急ストア',name:'東急ストア',event:'トクトクデー (3・13・23日)',type:'points',headline:'3',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'毎月3・13・23日はTOKYU CARDで3倍。',trend:'通年施策。',cardTypes:['tokyu'],prefectures:['東京都','神奈川県']},
+{id:'e9',group:'ekibiru',subgroup:'小田急',name:'小田急百貨店・新宿ミロード',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:75,detail:'新宿・町田・藤沢など。',trend:'',cardTypes:['odakyu'],prefectures:['東京都','神奈川県']},
+{id:'e10',group:'ekibiru',subgroup:'京王',name:'京王百貨店',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:75,detail:'京王新宿店・聖蹟桜ヶ丘店。',trend:'',cardTypes:['keio'],prefectures:['東京都']},
+{id:'e11',group:'ekibiru',subgroup:'京王',name:'京王百貨店新宿店',event:'駅弁大会',type:'discount',headline:'限定品',headlineUnit:'',months:[1],valueScore:35,detail:'毎年1月の日本最大級の駅弁大会。',trend:'1966年から毎年1月開催。',cardTypes:['keio'],prefectures:['東京都']},
+{id:'e12',group:'ekibiru',subgroup:'西武・そごう',name:'西武百貨店/そごう',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:75,detail:'西武池袋・渋谷・所沢・大宮、そごう横浜・千葉・大宮・川口。',trend:'',cardTypes:['seibu','mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県']},
+{id:'e13',group:'ekibiru',subgroup:'近鉄',name:'近鉄百貨店・あべのハルカス',event:'夏冬クリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:75,detail:'あべのハルカス本店等。',trend:'',cardTypes:['kintetsu'],prefectures:['大阪府','奈良県','三重県','愛知県']},
+{id:'el1',group:'electronics',subgroup:'ヤマダ',name:'ヤマダ電機',event:'決算セール (3月期)',type:'clearance',headline:'底値圏',headlineUnit:'',months:[3],valueScore:80,detail:'本決算最終月の3月、特に下旬は在庫処分価格。',trend:'3月期決算のため例年3月下旬に最大値下げ。',cardTypes:[],prefectures:'all'},
+{id:'el2',group:'electronics',subgroup:'ヤマダ',name:'ヤマダ電機',event:'中間決算 (9月)',type:'clearance',headline:'値引き',headlineUnit:'拡大',months:[9],valueScore:55,detail:'9月の中間決算。',trend:'',cardTypes:[],prefectures:'all'},
+{id:'el3',group:'electronics',subgroup:'ビック',name:'ビックカメラ',event:'決算セール (8月期)',type:'clearance',headline:'底値圏',headlineUnit:'',months:[8],valueScore:80,detail:'ビックは8月期決算のため8月下旬が最大の値下げ期。',trend:'8月期決算で例年8月下旬。',cardTypes:[],prefectures:'all'},
+{id:'el4',group:'electronics',subgroup:'ビック',name:'ビックカメラ',event:'中間決算 (2月)',type:'points',headline:'還元率',headlineUnit:'UP',months:[2],valueScore:50,detail:'2月の中間決算期。',trend:'',cardTypes:[],prefectures:'all'},
+{id:'el5',group:'electronics',subgroup:'ヨドバシ',name:'ヨドバシカメラ',event:'決算セール (3月期)',type:'points',headline:'還元率',headlineUnit:'UP',months:[3],valueScore:60,detail:'3月期決算。ポイント還元率の引き上げが目玉。',trend:'',cardTypes:[],prefectures:'all'},
+{id:'el6',group:'electronics',subgroup:'エディオン',name:'エディオン',event:'決算セール (3月期)',type:'clearance',headline:'処分価格',headlineUnit:'',months:[3],valueScore:55,detail:'西日本に強いエディオン。',trend:'',cardTypes:[],prefectures:[...KS,...PREFECTURES.chugoku,...PREFECTURES.shikoku,...PREFECTURES.chubu]},
+{id:'el7',group:'electronics',subgroup:'横断',name:'家電量販店 各社',event:'ブラックフライデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[11],valueScore:65,detail:'11月下旬、各社一斉のブラックフライデー。',trend:'2018年以降毎年11月第4週。',cardTypes:[],prefectures:'all'},
+{id:'el8',group:'electronics',subgroup:'横断',name:'家電量販店 各社',event:'初売り・福袋',type:'clearance',headline:'初売り',headlineUnit:'',months:[1],valueScore:55,detail:'1月の初売り。',trend:'',cardTypes:[],prefectures:'all'},
+{id:'d1',group:'depart',subgroup:'三越伊勢丹',name:'三越伊勢丹',event:'夏のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:80,detail:'伊勢丹新宿・三越日本橋・銀座・福岡三越等。',trend:'過去複数年、6月末〜7月初の金曜スタート。',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'d2',group:'depart',subgroup:'三越伊勢丹',name:'三越伊勢丹',event:'冬のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[12,1],valueScore:80,detail:'12月末〜1月の冬クリアランス。',trend:'例年12/26前後スタート、1月中旬まで継続。',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'d3',group:'depart',subgroup:'三越伊勢丹',name:'エムアイカード',event:'三越伊勢丹で常時5-10%還元',type:'points',headline:'5-10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:45,detail:'年間お買上げ額に応じて基本5%、最大10%。',trend:'',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'d4',group:'depart',subgroup:'三越伊勢丹',name:'三越伊勢丹',event:'メンバーズ感謝祭 (秋)',type:'member',headline:'会員',headlineUnit:'限定',months:[8,9],valueScore:55,detail:'カード会員限定招待会。',trend:'',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'d5',group:'depart',subgroup:'三越伊勢丹',name:'三越伊勢丹',event:'メンバーズ招待会 (冬)',type:'member',headline:'会員',headlineUnit:'限定',months:[2,3],valueScore:55,detail:'本決算前の招待会。',trend:'',cardTypes:['mi_card'],prefectures:['東京都','神奈川県','埼玉県','千葉県','京都府','大阪府','福岡県','北海道']},
+{id:'d6',group:'depart',subgroup:'高島屋',name:'高島屋',event:'夏のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:80,detail:'日本橋・新宿・横浜・大阪・京都・JR名古屋・玉川等の夏セール。',trend:'過去複数年、6月末〜7月初。',cardTypes:['takashimaya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','大阪府','京都府','愛知県','岡山県']},
+{id:'d7',group:'depart',subgroup:'高島屋',name:'高島屋',event:'冬のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[12,1],valueScore:80,detail:'12月末〜1月のクリアランス。',trend:'',cardTypes:['takashimaya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','大阪府','京都府','愛知県','岡山県']},
+{id:'d8',group:'depart',subgroup:'高島屋',name:'高島屋',event:'ポイントアップ特別ご優待会',type:'points',headline:'+2%',headlineUnit:'POINT',months:[3,4,9,10],valueScore:45,detail:'特別ご優待会期間中はタカシマヤカード払いで一般商品で計4%還元。',trend:'過去複数年、春と秋に開催。',cardTypes:['takashimaya'],prefectures:['東京都','神奈川県','埼玉県','千葉県','大阪府','京都府','愛知県','岡山県']},
+{id:'d9',group:'depart',subgroup:'大丸松坂屋',name:'大丸・松坂屋',event:'夏のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:80,detail:'大丸東京・梅田・心斎橋・神戸・松坂屋名古屋・上野・福岡天神等。',trend:'',cardTypes:['daimaru'],prefectures:['東京都','神奈川県','大阪府','兵庫県','愛知県','京都府','福岡県','高知県','山口県']},
+{id:'d10',group:'depart',subgroup:'大丸松坂屋',name:'大丸・松坂屋',event:'冬のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[12,1],valueScore:80,detail:'12月末〜1月のクリアランス。',trend:'',cardTypes:['daimaru'],prefectures:['東京都','神奈川県','大阪府','兵庫県','愛知県','京都府','福岡県','高知県','山口県']},
+{id:'d11',group:'depart',subgroup:'大丸松坂屋',name:'大丸・松坂屋',event:'ポイントアップdays',type:'points',headline:'+1%',headlineUnit:'POINT',months:[3,4,9,10,11],valueScore:40,detail:'基本5%+1%の計6%還元。',trend:'各店個別開催。',cardTypes:['daimaru'],prefectures:['東京都','神奈川県','大阪府','兵庫県','愛知県','京都府','福岡県','高知県','山口県']},
+{id:'d12',group:'depart',subgroup:'阪急阪神',name:'阪急・阪神百貨店',event:'夏のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:80,detail:'阪急うめだ本店・神戸・西宮・千里・博多阪急等。',trend:'',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'d13',group:'depart',subgroup:'阪急阪神',name:'阪急・阪神百貨店',event:'冬のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[12,1],valueScore:80,detail:'12月末〜1月のクリアランス。',trend:'',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'d14',group:'depart',subgroup:'阪急阪神',name:'ペルソナSTACIA',event:'阪急阪神で常時5-10%',type:'points',headline:'5-10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:45,detail:'基本5%、30万円で7%、50万円で10%。',trend:'',cardTypes:['persona'],prefectures:['大阪府','兵庫県','東京都','福岡県']},
+{id:'d15',group:'depart',subgroup:'岩田屋三越',name:'岩田屋本店・福岡三越',event:'夏のクリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:80,detail:'天神の岩田屋本店・福岡三越。',trend:'2023年実績で6月30日スタート。',cardTypes:['iwataya','mi_card'],prefectures:['福岡県']},
+{id:'s1',group:'specialty',subgroup:'無印良品',name:'無印良品',event:'無印良品週間 (春)',type:'discount',headline:'10%',headlineUnit:'OFF',months:[3,4],valueScore:60,detail:'メンバー限定で全品10%OFFになる11日間。',trend:'2023年以降3年連続「3月中旬の金曜→11日間」。2026年は3/20-3/30。',cardTypes:[],prefectures:'all'},
+{id:'s2',group:'specialty',subgroup:'無印良品',name:'無印良品',event:'無印良品週間 (秋)',type:'discount',headline:'10%',headlineUnit:'OFF',months:[10,11],valueScore:60,detail:'秋の無印良品週間。',trend:'2023〜2025年は3年連続「10月第4金曜→11日間」。',cardTypes:[],prefectures:'all'},
+{id:'s3',group:'specialty',subgroup:'ロフト',name:'ロフト',event:'イエローバザー (夏)',type:'clearance',headline:'値下げ',headlineUnit:'多数',months:[6,7],valueScore:60,detail:'ロフト年2回のバーゲン。',trend:'例年6月下旬〜7月中旬。',cardTypes:[],prefectures:'all'},
+{id:'s4',group:'specialty',subgroup:'ロフト',name:'ロフト',event:'イエローバザー (冬)',type:'clearance',headline:'値下げ',headlineUnit:'多数',months:[12,1],valueScore:60,detail:'12月下旬〜1月中旬の冬バーゲン。',trend:'2024年末は12/26〜2025/1/13。',cardTypes:[],prefectures:'all'},
+{id:'s5',group:'specialty',subgroup:'ロフト',name:'ロフト',event:'ロフトク (アプリ会員5%OFF)',type:'discount',headline:'5%',headlineUnit:'OFF',months:[3,5,9,11],valueScore:30,detail:'アプリ会員5%OFFクーポン。',trend:'過去3年は3/5/9/11月。',cardTypes:[],prefectures:'all'},
+{id:'s6',group:'specialty',subgroup:'ハンズ',name:'ハンズ',event:'ハンズメッセ',type:'clearance',headline:'年1回',headlineUnit:'大型',months:[6,8],valueScore:65,detail:'年に一度の大型バーゲン。',trend:'2022年まで8月下旬。2025年は6/13-6/29に「ハンズメッセ夏」。',cardTypes:[],prefectures:'all'},
+{id:'l1',group:'local_sc',subgroup:'JRタワー',name:'札幌ステラプレイス/アピア',event:'春のごばポ (5倍)',type:'points',headline:'5',headlineUnit:'倍',months:[3],valueScore:55,detail:'JRタワースクエアカードのポイントが5倍 (実質約5%還元)。',trend:'2025年春は3/19-3/24。',cardTypes:['jr_tower'],prefectures:['北海道']},
+{id:'l2',group:'local_sc',subgroup:'JRタワー',name:'札幌ステラプレイス/アピア',event:'秋のごばポ (5倍)',type:'points',headline:'5',headlineUnit:'倍',months:[10,11],valueScore:55,detail:'秋の5倍ポイントセール。',trend:'例年10月下旬-11月上旬。',cardTypes:['jr_tower'],prefectures:['北海道']},
+{id:'l3',group:'local_sc',subgroup:'ららぽーと',name:'ららぽーと各館',event:'サマーバーゲン',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:70,detail:'TOKYO-BAY・横浜・新三郷・豊洲・湘南平塚等。',trend:'例年6月下旬〜7月中旬。',cardTypes:['mitsui_card'],prefectures:['千葉県','東京都','神奈川県','埼玉県']},
+{id:'l4',group:'local_sc',subgroup:'ららぽーと',name:'ららぽーと各館',event:'ウィンタークリアランス',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[12,1],valueScore:70,detail:'冬クリアランス。',trend:'',cardTypes:['mitsui_card'],prefectures:['千葉県','東京都','神奈川県','埼玉県']},
+{id:'l5',group:'local_sc',subgroup:'三井SP',name:'三井ショッピングパーク',event:'カード会員ポイントアップ',type:'points',headline:'2-3',headlineUnit:'倍',months:[3,5,9,11],valueScore:45,detail:'三井ショッピングパークポイント・カード《セゾン》のポイント倍率アップ。',trend:'年4回程度。',cardTypes:['mitsui_card'],prefectures:['千葉県','東京都','神奈川県','埼玉県','大阪府','愛知県','静岡県','宮城県']},
+{id:'l6',group:'local_sc',subgroup:'ルクア',name:'ルクア大阪',event:'メンバーズ 5倍ポイントアップ',type:'points',headline:'5',headlineUnit:'倍',months:[2,3,5,10,11],valueScore:55,detail:'実質約5%還元。J-WESTカード併用で最大11倍相当。',trend:'過去実績: 2024年2/21-25,3/22-,5/15-19,10/23-27,11/22-26。',cardTypes:['lucua'],prefectures:['大阪府']},
+{id:'l7',group:'local_sc',subgroup:'アミュ博多',name:'アミュプラザ博多',event:'JQ CARD 365日5%OFF',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,detail:'JR博多シティはJQ CARD利用で365日5%OFF。',trend:'',cardTypes:['jq_card'],prefectures:['福岡県']},
+{id:'l8',group:'local_sc',subgroup:'アミュ博多',name:'アミュプラザ博多・アミュエスト',event:'プレミアムデイズ',type:'discount',headline:'10%',headlineUnit:'OFF',months:[3,5,9,11],valueScore:70,detail:'JQ CARD払いで請求時10%OFF。',trend:'2026年実績: 3/26-3/30、5/22-5/26開催確定。',cardTypes:['jq_card'],prefectures:['福岡県']},
+{id:'l9',group:'local_sc',subgroup:'アミュ大分',name:'アミュプラザおおいた',event:'JQ CARD 10%OFFデー',type:'discount',headline:'10%',headlineUnit:'OFF',months:[3,5,9,11],valueScore:70,detail:'JQ CARD払いで10%OFF。',trend:'年に数回・3-4日間。',cardTypes:['jq_card'],prefectures:['大分県']},
+{id:'l10',group:'local_sc',subgroup:'天神西鉄',name:'ソラリアプラザ/ミーナ天神',event:'夏のバーゲン',type:'clearance',headline:'30-70%',headlineUnit:'OFF',months:[6,7],valueScore:70,detail:'福岡天神の西鉄系商業施設。',trend:'2023年実績で6月30日〜7月1日スタート。',cardTypes:['nimoca'],prefectures:['福岡県']},
+{id:'ec1',group:'ec',subgroup:'Amazon',name:'Amazon',event:'新生活セール',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[3],valueScore:65,detail:'新生活シーズンの大型セール。',trend:'2026年は3/3-3/9開催実績。',cardTypes:['amazon_card'],prefectures:'all'},
+{id:'ec2',group:'ec',subgroup:'Amazon',name:'Amazon',event:'プライムデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[7],valueScore:85,detail:'プライム会員限定の年最大級セール。',trend:'2025年は7/8-7/14。2026年も7月開催を公式発表。',cardTypes:['amazon_card'],prefectures:'all'},
+{id:'ec3',group:'ec',subgroup:'Amazon',name:'Amazon',event:'プライム感謝祭',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[10],valueScore:75,detail:'プライム会員限定の秋セール。',trend:'2025年は10/4-10/10で実施。',cardTypes:['amazon_card'],prefectures:'all'},
+{id:'ec4',group:'ec',subgroup:'Amazon',name:'Amazon',event:'ブラックフライデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[11,12],valueScore:80,detail:'プライム会員以外も参加可能。',trend:'2025年は11/21-12/1の約10日間。',cardTypes:['amazon_card'],prefectures:'all'},
+{id:'ec5',group:'ec',subgroup:'楽天',name:'楽天市場',event:'楽天スーパーセール',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:75,detail:'年4回開催の最大規模セール。',trend:'毎年3・6・9・12月の上旬。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'ec6',group:'ec',subgroup:'楽天',name:'楽天市場',event:'お買い物マラソン',type:'points',headline:'最大10',headlineUnit:'倍',months:[1,2,4,5,7,8,10,11],valueScore:55,detail:'12月以外のほぼ毎月開催。',trend:'2026年5月は5/9-5/16と5/23-5/27の2回開催予想。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'ec7',group:'ec',subgroup:'楽天',name:'楽天市場',event:'楽天ブラックフライデー',type:'discount',headline:'最大',headlineUnit:'還元',months:[11],valueScore:80,detail:'11月下旬の大型セール。',trend:'2020年以降毎年11月下旬。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'ec8',group:'ec',subgroup:'楽天',name:'楽天市場',event:'5と0のつく日',type:'points',headline:'4',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,detail:'楽天カード払いで4倍。',trend:'',cardTypes:['rakuten'],prefectures:'all'},
+{id:'ec9',group:'ec',subgroup:'ZOZO',name:'ZOZOTOWN',event:'ZOZO SALE',type:'clearance',headline:'最大70%',headlineUnit:'OFF',months:[1,6,7,12],valueScore:70,detail:'シーズンエンドの大型クリアランス。',trend:'夏は6月中旬〜7月、冬は12月下旬〜1月。',cardTypes:['zozo'],prefectures:'all'},
+{id:'ec10',group:'ec',subgroup:'PayPay',name:'Yahoo!ショッピング',event:'超PayPay祭',type:'points',headline:'最大',headlineUnit:'還元',months:[3,6,9,12],valueScore:65,detail:'PayPay経済圏の最大規模セール。',trend:'年3〜4回。',cardTypes:['paypay'],prefectures:'all'},
+{id:'ec11',group:'ec',subgroup:'Qoo10',name:'Qoo10',event:'メガ割',type:'discount',headline:'20%',headlineUnit:'OFF',months:[3,6,9,11],valueScore:65,detail:'年4回開催のQoo10最大級割引。',trend:'3月・6月・9月・11月の年4回・各回約2週間。',cardTypes:[],prefectures:'all'},
+{id:'ci1',group:'card_issuer',subgroup:'dカード',name:'dカード ポイントアップ祭',event:'対象店舗で最大10倍',type:'points',headline:'最大10',headlineUnit:'倍',months:[2,5,7,9,11,12],valueScore:60,detail:'特約店ポイントが大幅アップ。',trend:'2026年5月実績: 5/20-5/25。年6回前後。',cardTypes:['dcard'],prefectures:'all'},
+{id:'ci2',group:'card_issuer',subgroup:'dカード',name:'dカード特約店',event:'スタバ・マツキヨで3%還元',type:'points',headline:'3%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'スタバ・マツキヨ・高島屋・JAL等で還元率アップ。',trend:'通年施策。',cardTypes:['dcard'],prefectures:'all'},
+{id:'ci3',group:'card_issuer',subgroup:'三井住友',name:'対象コンビニ・飲食店',event:'スマホタッチで最大10%',type:'points',headline:'10%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:55,alwaysOn:true,detail:'セブン・ローソン・ファミマ・マクド等でスマホタッチ決済で最大10%。',trend:'2024年10月開始、通年継続。',cardTypes:['vpoint'],prefectures:'all'},
+{id:'ci4',group:'card_issuer',subgroup:'三井住友',name:'Vポイント祭',event:'2人に1人当選',type:'payback',headline:'抽選',headlineUnit:'還元',months:[4,5,11,12],valueScore:45,alwaysOn:true,detail:'2人に1人にVポイントが当たる抽選キャンペーン。',trend:'2026年4-5月は2周年記念。',cardTypes:['vpoint'],prefectures:'all'},
+{id:'ci5',group:'card_issuer',subgroup:'三菱UFJ',name:'三菱UFJカード',event:'コンビニ・スタバで最大20倍',type:'points',headline:'最大20',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:60,alwaysOn:true,detail:'対象店でグローバルポイント最大20倍。',trend:'通年で実施。',cardTypes:['mufg'],prefectures:'all'},
+{id:'ci6',group:'card_issuer',subgroup:'JCB',name:'JCB ORIGINAL SERIES',event:'スタバ・Amazon等で2-10倍',type:'points',headline:'最大10',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,alwaysOn:true,detail:'パートナー店でポイント2-10倍。',trend:'通年施策。',cardTypes:['jcb'],prefectures:'all'},
+{id:'al1',group:'all',subgroup:'横断',name:'各社共通',event:'BF〜サイバーマンデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[11],valueScore:60,detail:'11月下旬、家電・PC・アパレル横断で年内屈指。',trend:'毎年11月第4週に集中。',cardTypes:[],prefectures:'all'},
+{id:'al2',group:'all',subgroup:'横断',name:'各社共通',event:'初売り・福袋',type:'clearance',headline:'福袋',headlineUnit:'多数',months:[1],valueScore:60,detail:'元旦〜松の内。',trend:'',cardTypes:[],prefectures:'all'},
+];
+
+/* ===== 楽器版 EVENTS ===== */
+const INSTRUMENT_EVENTS=[
+{id:'in1',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器',event:'大決算SALE',type:'clearance',headline:'特別',headlineUnit:'価格',months:[1,2,3],valueScore:75,detail:'本決算 (5月期) 前の駆け込み在庫処分。電子ピアノ・管楽器・ギターの展示処分品多数。',trend:'例年1〜3月にかけて「大決算売り尽くしセール」を各店舗で順次開催。',cardTypes:['shimamura_app'],prefectures:'all'},
+{id:'in2',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器',event:'お盆・夏のフェア',type:'clearance',headline:'値引き',headlineUnit:'拡大',months:[8],valueScore:60,detail:'夏のグランドピアノフェア・サマーミュージックフェア。',trend:'例年8月のお盆時期に集中開催。',cardTypes:['shimamura_app'],prefectures:'all'},
+{id:'in3',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器',event:'春のご入会キャンペーン',type:'discount',headline:'入会金',headlineUnit:'50%OFF',months:[1,2,3,4,5],valueScore:40,alwaysOn:true,detail:'ミュージックスクール・サロンの入会金が50%OFF。',trend:'例年1月下旬〜5月末まで開催。',cardTypes:[],prefectures:'all'},
+{id:'in4',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器',event:'ショッピングクレジット無金利',type:'discount',headline:'無金利',headlineUnit:'',months:[1,2,3,4,5,9,10,11,12],valueScore:50,alwaysOn:true,detail:'最大24回まで分割無金利。3万円以上・月5,000円以上が条件。',trend:'年に複数回開催。新生活 (1-5月)・秋冬 (9-12月) が中心。',cardTypes:[],prefectures:'all'},
+{id:'in5',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器 三井SP内店舗',event:'三井ショッピングパーク連動ポイントアップ',type:'points',headline:'2-3',headlineUnit:'倍',months:[3,5,9,11],valueScore:60,detail:'ららぽーとEXPOCITY店等で三井SP全体のポイントアップに連動。',trend:'三井SPの年4回ポイントアップ (3/5/9/11月)。2024年3月にエキスポシティ店で開催実績。',synergy:'三井ショッピングパークカード《セゾン》を併用すれば、楽器代金からSC全体のポイントが加算され、無金利クレジットと組み合わせて実質値引きも狙える。',cardTypes:['mitsui_card'],prefectures:['大阪府','千葉県','東京都','神奈川県','埼玉県','愛知県','静岡県','宮城県']},
+{id:'in5b',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器 アミュプラザ各店',event:'JQ CARD 館内ダブルポイント連動',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,5,8,9,10,11],valueScore:65,detail:'アミュプラザ博多・小倉・長崎・大分・宮崎・鹿児島の島村楽器でJQ CARD決済+JRキューポアプリ提示で最大10倍 (5%相当) のJRキューポ還元。',trend:'2025年8/8〜8/17アミュプラザ鹿児島でJQキューポダブルキャンペーン実績。プレミアムデイズ(3/5/9/11月)期間にも連動して開催される傾向。',synergy:'アミュ館内のJQ CARDプレミアムデイズ10%OFFと、楽器店のショッピングクレジット無金利を組み合わせれば、楽器・電子ピアノを実質1割引+ポイント還元で購入可能。',cardTypes:['jq_card','shimamura_app'],prefectures:['福岡県','長崎県','大分県','熊本県','鹿児島県','宮崎県']},
+{id:'in5c',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器 札幌ステラプレイス店',event:'JRタワーごばポ連動 (春・秋)',type:'points',headline:'5',headlineUnit:'倍',months:[3,10,11],valueScore:65,detail:'JRタワー (札幌ステラプレイス4F) の春のごばポ・秋のごばポ期間中、JRタワースクエアカードで島村楽器でもポイント5倍 (実質5%還元)。',trend:'2025年春は3/19-3/24でJRタワー全館対応。秋は10月下旬〜11月上旬。',synergy:'札幌駅直結の利便性に加え、JRタワースクエアカードを使えば道内最大級の楽譜コーナー (16万冊) や電子ピアノ購入で5%還元。',cardTypes:['jr_tower'],prefectures:['北海道']},
+{id:'in5d',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器 ルクア大阪店',event:'LUCUAメンバーズ 5倍ポイント連動',type:'points',headline:'5',headlineUnit:'倍',months:[2,3,5,10,11],valueScore:65,detail:'ルクア大阪のメンバーズカード5倍ポイントアップ期間中、館内テナントの島村楽器でも実質5%還元。J-WESTカード併用で最大11倍相当。',trend:'年4-5回・5日間。2024年は2/21-25、3/22-、5/15-19、10/23-27、11/22-26実績。',synergy:'梅田・大阪駅直結のルクア館内で、館全体の5倍キャンペーンに乗ることで、楽器・楽譜の購入時にWESTERポイントを大量獲得。',cardTypes:['lucua'],prefectures:['大阪府']},
+{id:'in5e',group:'inst_shop',subgroup:'島村楽器',name:'島村楽器 イオンモール内店舗',event:'お客さま感謝デー連動 5%OFF',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,alwaysOn:true,detail:'イオンモール・イオン併設の島村楽器でイオンカード/AEON Pay決済で毎月20・30日に5%OFF。',trend:'通年。長岡店・各イオンモール店舗が対象。',synergy:'イオンカードの「ありが10デー」(10日)と組み合わせれば月3回お得な日が発生。楽譜・小物・弦・リードなど消耗品の購入で有効。',cardTypes:['aeon_card'],prefectures:'all'},
+{id:'in5f',group:'inst_shop',subgroup:'イシバシ楽器',name:'イシバシ楽器 PARCO内店舗',event:'PARCOグランバザール連動',type:'clearance',headline:'5%',headlineUnit:'OFF',months:[1,7],valueScore:60,detail:'PARCO内のイシバシ楽器 (渋谷店等) でPARCOカード提示時に5%OFF、グランバザール期間中はテナント横断のセール対象に。',trend:'年2回 (1月新春・7月夏) のグランバザール期間に連動。',synergy:'PARCOカード提示の5%OFFに加え、IMCカードのポイント還元、ショッピングクレジット無金利を3層で組み合わせ可能。',cardTypes:['parco_card','imc'],prefectures:['東京都','大阪府','愛知県','北海道','宮城県','広島県','福岡県']},
+{id:'in7',group:'inst_shop',subgroup:'イシバシ楽器',name:'イシバシ楽器',event:'大決算SALE',type:'clearance',headline:'クーポン',headlineUnit:'発行',months:[1,2,3],valueScore:65,detail:'年明け〜3月の大決算SALE。Fender/Gibsonクーポン・新生活クーポンを発行。',trend:'例年1〜3月の決算期セール。IMCカードでポイント還元 (買取時もポイント加算)。',cardTypes:['imc'],prefectures:'all'},
+{id:'in8',group:'inst_shop',subgroup:'イシバシ楽器',name:'イシバシ楽器',event:'ブラックフライデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[11],valueScore:70,detail:'楽天市場・Amazon出店分含む全方位ブラックフライデー。',trend:'例年11月下旬。楽天市場店ではポイント大幅倍率アップ。',synergy:'楽天市場店は楽天カード+5と0のつく日+お買い物マラソンの組み合わせで10倍以上の還元可能。',cardTypes:['imc','rakuten'],prefectures:'all'},
+{id:'in9',group:'inst_shop',subgroup:'サウンドハウス',name:'サウンドハウス',event:'ブラックフライデーセール',type:'clearance',headline:'大幅',headlineUnit:'値下げ',months:[11],valueScore:75,detail:'DTM・PA・楽器周辺機器を中心とした大幅値下げセール。',trend:'例年11月下旬の数日間に集中開催。',cardTypes:[],prefectures:'all'},
+{id:'in10',group:'inst_shop',subgroup:'サウンドハウス',name:'サウンドハウス',event:'大幅値下げ市・アウトレット',type:'clearance',headline:'通年',headlineUnit:'値下げ',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:50,alwaysOn:true,detail:'通年の大幅値下げ市・アウトレットコーナーで型落ち品を常時値下げ販売。',trend:'通年実施。新製品入れ替え時期に対象商品が増える傾向。',cardTypes:[],prefectures:'all'},
+{id:'in11',group:'inst_shop',subgroup:'イケベ楽器',name:'イケベ楽器',event:'ブラックフライデーセール',type:'clearance',headline:'最大90%',headlineUnit:'OFF',months:[11,12],valueScore:80,detail:'最大90%OFF表示の大型在庫処分。760点以上の特価品。',trend:'2023年11/21-12/1で開催実績。例年11月下旬〜12月初旬。',cardTypes:['ikebe_club'],prefectures:'all'},
+{id:'in12',group:'inst_shop',subgroup:'イケベ楽器',name:'イケベ楽器 楽天市場店',event:'BLACK FRIDAY ポイント44.5倍',type:'points',headline:'44.5',headlineUnit:'倍',months:[11],valueScore:85,detail:'楽天市場のBLACK FRIDAYで楽器店出店分が最大44.5倍ポイント還元。',trend:'2023年BFで実績あり。楽天SPU・お買い物マラソン・5と0のつく日を重ねて最大倍率に。',synergy:'楽天カード+楽天プレミアム/ゴールド+お買い物マラソン買い回り+5/0の日エントリーで44.5倍に到達可能。実質40%以上の還元になる例も。',cardTypes:['rakuten','ikebe_club'],prefectures:'all'},
+{id:'in13',group:'inst_shop',subgroup:'山野楽器',name:'山野楽器',event:'ヤマノミュージックポイント',type:'points',headline:'1%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,alwaysOn:true,detail:'CD・DVD・Blu-ray・楽譜・書籍購入で1ポイント。100ptで100円のお買物券。',trend:'通年施策。',cardTypes:['yamano_point'],prefectures:'all'},
+{id:'in14',group:'inst_shop',subgroup:'横断',name:'楽器店各社',event:'新生活応援フェア',type:'discount',headline:'入門セット',headlineUnit:'特価',months:[2,3,4],valueScore:55,detail:'吹奏楽・新入学・新生活向けの入門セット価格・楽器レンタル割引。',trend:'2-4月の新生活シーズンに各社一斉開催。',cardTypes:[],prefectures:'all'},
+{id:'in15',group:'ec',subgroup:'楽天',name:'楽天市場 (楽器カテゴリ)',event:'楽天スーパーセール 楽器',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:70,detail:'年4回の楽天スーパーセール。島村・イケベ・イシバシ・クロサワ・ギタープラネット・BIG BOSS等の楽器店出店分が対象。',trend:'毎年3・6・9・12月開催。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'in16',group:'ec',subgroup:'Amazon',name:'Amazon 楽器・オーディオ',event:'プライムデー・BF (楽器)',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[7,11],valueScore:70,detail:'プライムデー (7月)・BF (11月) で楽器・オーディオ機器が値下げ。',trend:'2025年プライムデーは7/8-7/14、BFは11/21-12/1。',cardTypes:['amazon_card'],prefectures:'all'},
+];
+
+/* ===== 家具版 EVENTS ===== */
+const FURNITURE_EVENTS=[
+{id:'fu1',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ',event:'みんなの新生活応援キャンペーン',type:'discount',headline:'最大3,400',headlineUnit:'品目',months:[2,3,4],valueScore:75,detail:'本決算 (2月期) に合わせた最大規模の新生活キャンペーン。家具・寝具・カーテン・収納が期間限定価格。',trend:'2026年は2/20〜4/6開催。最大3,400アイテムが期間限定価格。',cardTypes:['nitori_app'],prefectures:'all'},
+{id:'fu2',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ',event:'春のポイント還元キャンペーン',type:'points',headline:'最大7,700',headlineUnit:'pt',months:[1,2,3,4],valueScore:70,detail:'ニトリアプリ会員限定で家具・家電購入により最大7,700ポイント獲得。',trend:'2026年は1/30〜4/6に開催。新生活応援と並行。',cardTypes:['nitori_app'],prefectures:'all'},
+{id:'fu3',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ',event:'夏の感謝祭・半期決算セール',type:'clearance',headline:'値下げ',headlineUnit:'多数',months:[8,9],valueScore:65,detail:'半期決算 (8月期) に合わせた夏の感謝祭。Nクール寝具・夏物在庫処分。',trend:'例年8月中旬〜9月下旬。2023年は8/10〜9/25。2025年は8/8〜9/24に最大1,600アイテムが感謝祭価格。',cardTypes:['nitori_app'],prefectures:'all'},
+{id:'fu4',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ',event:'創業祭 (周年記念)',type:'clearance',headline:'最大3,200',headlineUnit:'品目',months:[11,12,1],valueScore:85,detail:'年間最大規模のセール。大型家具のポイント1.5倍 (220円ごとに3pt) に増量。家具15万円以上で不要家具引取無料。',trend:'2025-2026年は「58周年記念創業祭」を11/28〜2026/1/5に開催。BFと連動。',cardTypes:['nitori_app'],prefectures:'all'},
+{id:'fu5',group:'fur_shop',subgroup:'ニトリ',name:'ニトリアプリ',event:'アプリ会員ポイント2倍',type:'points',headline:'2',headlineUnit:'倍',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,alwaysOn:true,detail:'ニトリアプリ会員はベースのニトリポイントが2倍。入会後14日以内に3,000円以上購入で500pt。',trend:'通年実施。',cardTypes:['nitori_app'],prefectures:'all'},
+{id:'fu6',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ 楽天市場店',event:'楽天スーパーセール連動',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:65,detail:'楽天市場のスーパーセール・お買い物マラソン期間中、ニトリ楽天市場店もポイント還元アップ。',trend:'毎年3・6・9・12月開催。',synergy:'楽天カード+SPU+5と0のつく日と組み合わせて買い回りすれば、ニトリ公式より実質価格が安くなる場合あり。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'fu6b',group:'fur_shop',subgroup:'ニトリ',name:'ニトリデコホーム 博多バスターミナル店',event:'西鉄系商業施設 nimoca連動',type:'discount',headline:'nimoca',headlineUnit:'対応',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'博多駅前の博多バスターミナルビル (西鉄系) に入店。nimocaクレジット決済対応、館内ポイントアップ時に連動可能。',trend:'博多バスターミナル館内テナントとして展開。アミュプラザ博多 (JR系) には未出店なのでJQ CARDではなくnimocaが主軸。',synergy:'クレジットnimocaで支払えばnimocaポイント+ニトリアプリ会員ポイント2倍の二重取り。西鉄バス利用との合算でnimocaポイント還元も併用可能。',cardTypes:['nimoca','nitori_app'],prefectures:['福岡県']},
+{id:'fu6c',group:'fur_shop',subgroup:'ニトリ',name:'ニトリEXPRESS JR駅ビル内店舗',event:'駅ビル夏冬クリアランス連動',type:'clearance',headline:'5-30%',headlineUnit:'OFF',months:[6,7,12,1],valueScore:55,detail:'JR系駅ビル (アトレ・エキュート等) 内のニトリEXPRESSが、館全体の夏冬クリアランス時にテナントとして参加。',trend:'夏 (6-7月)・冬 (12-1月) のクリアランスシーズンに連動。',synergy:'JRE CARDの3.5%還元と、ニトリアプリ会員のポイント2倍を組み合わせ可能。生活雑貨・寝具の購入で有効。',cardTypes:['jre_card','nitori_app'],prefectures:[...K,...T]},
+{id:'fu6d',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ イオンモール内店舗',event:'イオン感謝デー連動 5%OFF',type:'discount',headline:'5%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:40,alwaysOn:true,detail:'イオンモール内のニトリ店舗 (デコホーム含む) でイオンカード/AEON Pay決済で毎月20・30日に5%OFFまたはWAON POINT加算。',trend:'通年。店舗ごとに条件が異なるため要確認。',synergy:'ニトリアプリのポイント2倍とイオンカードの感謝デー5%を組み合わせ可能。生活雑貨・寝具・キッチン用品の購入で有効。',cardTypes:['aeon_card','nitori_app'],prefectures:'all'},
+{id:'fu7',group:'fur_shop',subgroup:'ニトリ',name:'ニトリ',event:'株主優待 10%OFF',type:'discount',headline:'10%',headlineUnit:'OFF',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:55,alwaysOn:true,detail:'株主優待券で会計時10%OFF (1枚10万円まで)。セール価格との併用可。',trend:'年2回 (2月期・8月期) 発行。金券ショップでも入手可。',synergy:'創業祭・新生活キャンペーンと併用すれば、セール価格からさらに10%OFFで実質最安値圏に。',cardTypes:[],prefectures:'all'},
+{id:'fu8',group:'fur_shop',subgroup:'IKEA',name:'IKEA',event:'ウィンターセール',type:'clearance',headline:'最大75%',headlineUnit:'OFF',months:[12,1],valueScore:85,detail:'IKEA最大のセール。160点以上のアイテムが最大75%OFF。大型家具・照明・ソファ・キッチン雑貨。',trend:'例年12月上旬〜12月26日前後。IKEA Familyメンバー先行あり。',cardTypes:['ikea_family'],prefectures:'all'},
+{id:'fu9',group:'fur_shop',subgroup:'IKEA',name:'IKEA',event:'サマーセール',type:'clearance',headline:'最大50%',headlineUnit:'OFF',months:[6,7],valueScore:70,detail:'夏向けテキスタイル・屋外家具・ガーデンチェアが中心。',trend:'例年6月上旬から下旬の数週間。',cardTypes:['ikea_family'],prefectures:'all'},
+{id:'fu10',group:'fur_shop',subgroup:'IKEA',name:'IKEA',event:'新生活応援セール',type:'discount',headline:'最大20%',headlineUnit:'OFF',months:[2,3,4],valueScore:55,detail:'家具・寝具・収納用品が中心。新生活開始者向け。',trend:'2月下旬〜3月上旬から実施。',cardTypes:['ikea_family'],prefectures:'all'},
+{id:'fu11',group:'fur_shop',subgroup:'IKEA',name:'IKEA',event:'初売り・福袋',type:'clearance',headline:'福袋',headlineUnit:'限定',months:[1],valueScore:60,detail:'1/2-1/6の初売り。雑貨・お菓子・寝具の福袋。羽毛掛布団セット等が半額以下になる例も。',trend:'例年1/2〜1/6の5日間程度。',cardTypes:['ikea_family'],prefectures:'all'},
+{id:'fu12',group:'fur_shop',subgroup:'IKEA',name:'IKEA',event:'ブラックフライデー',type:'discount',headline:'最大50%',headlineUnit:'OFF',months:[11],valueScore:70,detail:'大型家具を中心とした短期集中セール。',trend:'例年11月末の1週間ほど。',cardTypes:['ikea_family'],prefectures:'all'},
+{id:'fu13',group:'fur_shop',subgroup:'IKEA',name:'IKEA Family',event:'メンバー限定価格',type:'discount',headline:'メンバー',headlineUnit:'価格',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:35,alwaysOn:true,detail:'IKEA Familyメンバーはメンバー限定価格・先行セール・誕生月クーポン。入会無料。',trend:'通年。',cardTypes:['ikea_family'],prefectures:'all'},
+{id:'fu14',group:'fur_shop',subgroup:'大塚家具',name:'大塚家具 (IDC OTSUKA)',event:'半期に一度の大決算セール',type:'clearance',headline:'最大40%',headlineUnit:'OFF',months:[3,9],valueScore:75,detail:'本決算 (3月期) と中間決算 (9月期) の年2回開催。ヒモラ・ファブリカ等のブランドを30-40%OFF。',trend:'例年3月と9月の決算期。',cardTypes:[],prefectures:'all'},
+{id:'fu15',group:'fur_shop',subgroup:'大塚家具',name:'大塚家具',event:'新生活フェア',type:'discount',headline:'特別',headlineUnit:'価格',months:[2,3,4],valueScore:50,detail:'新生活シーズン向けの家具特別価格・配送無料キャンペーン。',trend:'例年2-4月。',cardTypes:[],prefectures:'all'},
+{id:'fu16',group:'fur_shop',subgroup:'マナベ',name:'マナベインテリアハーツ',event:'新生活応援セール',type:'discount',headline:'特別',headlineUnit:'価格',months:[2,3,4],valueScore:55,detail:'関西を中心に展開するマナベの新生活応援セール。展示品アウトレット・家具お引取り連動。',trend:'例年2-4月。',cardTypes:[],prefectures:['大阪府','兵庫県','京都府','奈良県','和歌山県','岡山県']},
+{id:'fu17',group:'fur_shop',subgroup:'マナベ',name:'マナベインテリアハーツ',event:'夏のクリアランスセール',type:'clearance',headline:'値下げ',headlineUnit:'多数',months:[7,8],valueScore:60,detail:'夏のクリアランスでソファ・ダイニング・ベッドの展示処分品。',trend:'例年7-8月。',cardTypes:[],prefectures:['大阪府','兵庫県','京都府','奈良県','和歌山県','岡山県']},
+{id:'fu18',group:'fur_shop',subgroup:'マナベ',name:'マナベインテリアハーツ',event:'冬の感謝セール',type:'clearance',headline:'値下げ',headlineUnit:'多数',months:[12,1],valueScore:60,detail:'冬の感謝セール・初売り。',trend:'例年12月下旬〜1月。',cardTypes:[],prefectures:['大阪府','兵庫県','京都府','奈良県','和歌山県','岡山県']},
+{id:'fu19',group:'ec',subgroup:'楽天',name:'楽天市場 (家具)',event:'楽天スーパーセール 家具',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:70,detail:'年4回の楽天スーパーセール。ニトリ楽天市場店・大塚家具楽天市場店・LOWYA等が対象。',trend:'毎年3・6・9・12月。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'fu20',group:'ec',subgroup:'Amazon',name:'Amazon 家具・インテリア',event:'新生活セール・プライムデー',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[3,7,11],valueScore:65,detail:'新生活セール (3月)、プライムデー (7月)、BF (11月) で家具が値下げ。',trend:'2026年新生活SALEは3/3-3/9。',cardTypes:['amazon_card'],prefectures:'all'},
+];
+
+/* ===== 版別設定 ===== */
+const VERSION_DATA = {
+  general: { events: GENERAL_EVENTS, label: '通常版',
+    groupOrder: ['aeon','parco_marui','ekibiru','electronics','depart','specialty','local_sc','ec','card_issuer'],
+    groupLabels: {aeon:'イオン系・OPA',parco_marui:'パルコ・マルイ',ekibiru:'駅ビル',electronics:'家電量販',depart:'百貨店',specialty:'専門店',local_sc:'地域ローカル',ec:'EC',card_issuer:'カード会社',all:'横断'},
+    filterOptions: [
+      {val:'aeon',label:'イオングループ・OPA'},
+      {val:'parco_marui',label:'パルコ・マルイ・ルミネ'},
+      {val:'ekibiru',label:'駅ビル'},
+      {val:'electronics',label:'家電量販店'},
+      {val:'depart',label:'百貨店'},
+      {val:'specialty',label:'専門店'},
+      {val:'local_sc',label:'地域ローカルSC'},
+      {val:'ec',label:'EC'},
+      {val:'card_issuer',label:'カード会社独自販促'},
+    ],
+    wizardRetailers: [
+      {val:'aeon',label:'イオン・OPA',sub:'スーパー・モール'},
+      {val:'parco_marui',label:'パルコ・マルイ・ルミネ',sub:'駅前ファッションSC'},
+      {val:'ekibiru',label:'駅ビル',sub:'アトレ・エキュート等'},
+      {val:'depart',label:'百貨店',sub:'三越伊勢丹・高島屋等'},
+      {val:'electronics',label:'家電量販店',sub:'ヤマダ・ビック等'},
+      {val:'specialty',label:'専門店',sub:'無印・ロフト・ハンズ'},
+      {val:'local_sc',label:'地域ローカルSC',sub:'ステラ・ルクア等'},
+      {val:'ec',label:'EC',sub:'Amazon・楽天等'},
+      {val:'card_issuer',label:'カード会社独自販促',sub:'dカード等'},
+    ]
+  },
+  instrument: { events: INSTRUMENT_EVENTS, label: '楽器版',
+    groupOrder: ['inst_shop','ec'],
+    groupLabels: {inst_shop:'楽器店',ec:'EC・楽天/Amazon',all:'横断'},
+    filterOptions: [
+      {val:'inst_shop',label:'楽器店'},
+      {val:'ec',label:'EC (楽天・Amazon)'},
+    ],
+    wizardRetailers: [
+      {val:'inst_shop',label:'楽器店',sub:'島村・イシバシ・サウンドハウス等'},
+      {val:'ec',label:'EC',sub:'楽天楽器店・Amazon'},
+    ]
+  },
+  furniture: { events: FURNITURE_EVENTS, label: '家具版',
+    groupOrder: ['fur_shop','ec'],
+    groupLabels: {fur_shop:'家具店',ec:'EC・楽天/Amazon',all:'横断'},
+    filterOptions: [
+      {val:'fur_shop',label:'家具店'},
+      {val:'ec',label:'EC (楽天・Amazon)'},
+    ],
+    wizardRetailers: [
+      {val:'fur_shop',label:'家具店',sub:'ニトリ・IKEA・大塚家具・マナベ'},
+      {val:'ec',label:'EC',sub:'楽天家具店・Amazon'},
+    ]
+  }
+};
+
+/* ===== 状態 ===== */
+let currentVersion = 'general';
+function currentEvents() { return VERSION_DATA[currentVersion].events; }
+function groupLabel(g) { return VERSION_DATA[currentVersion].groupLabels[g] || g; }
+
+/* ===== ヘルパー ===== */
+function nowMonth(){return new Date().getMonth()+1}
+function formatYM(d){return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')}
+function parseMonthInput(v){if(!v)return null;const[y,m]=v.split('-').map(Number);return{y,m}}
+
+function getFilters(){
+  return{
+    region:document.getElementById('filterRegion').value,
+    prefecture:document.getElementById('filterPrefecture').value,
+    type:document.getElementById('filterType').value,
+    retailer:document.getElementById('filterRetailer').value,
+    card:document.getElementById('filterCard').value,
+    sort:document.getElementById('sortBy').value,
+    from:parseMonthInput(document.getElementById('filterFrom').value),
+    to:parseMonthInput(document.getElementById('filterTo').value),
+  };
+}
+
+function eventCoversPref(ev,p){if(ev.prefectures==='all')return true;return Array.isArray(ev.prefectures)&&ev.prefectures.includes(p)}
+function eventCoversRegion(ev,r){if(ev.prefectures==='all')return true;const ps=PREFECTURES[r]||[];return ev.prefectures.some(p=>ps.includes(p))}
+function eventMatchesFilters(ev,f){
+  if(f.prefecture!=='all'){if(!eventCoversPref(ev,f.prefecture))return false}
+  else if(f.region!=='all'){if(!eventCoversRegion(ev,f.region))return false}
+  if(f.type!=='all'&&ev.type!==f.type)return false;
+  if(f.retailer!=='all'&&ev.group!==f.retailer&&ev.group!=='all')return false;
+  if(f.card!=='all'){const c=ev.cardTypes||[];if(!c.includes(f.card))return false}
+  return true;
+}
+
+function eventInDateRange(ev,f){
+  if(!f.from&&!f.to)return ev.months.slice();
+  const today=new Date();
+  const fy=f.from?f.from.y:today.getFullYear();
+  const fm=f.from?f.from.m:today.getMonth()+1;
+  const ty=f.to?f.to.y:fy+1;
+  const tm=f.to?f.to.m:fm;
+  const matches=[];
+  for(let y=fy;y<=ty;y++){
+    for(let m=1;m<=12;m++){
+      const inR=(y>fy||m>=fm)&&(y<ty||m<=tm);
+      if(inR&&ev.months.includes(m))matches.push({y,m});
+    }
+  }
+  return matches.length>0?matches:null;
+}
+
+function updatePrefectureOptions(){
+  const r=document.getElementById('filterRegion').value;
+  const ps=document.getElementById('filterPrefecture');
+  const cur=ps.value;
+  const list=r==='all'?Object.values(PREFECTURES).flat():(PREFECTURES[r]||[]);
+  ps.innerHTML='<option value="all">すべての都道府県</option>'+list.map(p=>`<option value="${p}">${p}</option>`).join('');
+  if(cur!=='all'&&list.includes(cur))ps.value=cur;else ps.value='all';
+}
+
+function updateRetailerOptions(){
+  const sel=document.getElementById('filterRetailer');
+  const opts=VERSION_DATA[currentVersion].filterOptions;
+  sel.innerHTML='<option value="all">すべて</option>'+opts.map(o=>`<option value="${o.val}">${o.label}</option>`).join('');
+}
+
+function updateCardOptions(){
+  const sel=document.getElementById('filterCard');
+  const cur=sel.value;
+  /* 各版で使われるカードを抽出 */
+  const used=new Set();
+  currentEvents().forEach(ev=>(ev.cardTypes||[]).forEach(c=>used.add(c)));
+  const opts=Array.from(used).map(c=>{
+    const cd=CARD_DETAILS[c];
+    return{val:c,label:cd?cd.name:c};
+  }).sort((a,b)=>a.label.localeCompare(b.label,'ja'));
+  sel.innerHTML='<option value="all">すべてのカード</option>'+opts.map(o=>`<option value="${o.val}">${o.label}</option>`).join('');
+  if(opts.find(o=>o.val===cur))sel.value=cur;else sel.value='all';
+}
+
+function renderIntensityMap(){
+  const f=getFilters();
+  const map=document.getElementById('intensityMap');
+  const cm=nowMonth();
+  const filtered=currentEvents().filter(ev=>eventMatchesFilters(ev,f));
+  const vd=VERSION_DATA[currentVersion];
+  let html='<div class="imap-cell imap-header imap-row-label">店舗群＼月</div>';
+  for(let m=1;m<=12;m++){html+=`<div class="imap-cell imap-header${m===cm?' current':''}">${m}</div>`}
+  for(const g of vd.groupOrder){
+    html+=`<div class="imap-cell imap-row-label">${vd.groupLabels[g]}</div>`;
+    for(let m=1;m<=12;m++){
+      const evs=filtered.filter(ev=>(ev.group===g||ev.group==='all')&&ev.months.includes(m));
+      const max=evs.reduce((a,b)=>Math.max(a,b.valueScore||0),0);
+      const w=valueToWeather(max);
+      const cur=m===cm?' current':'';
+      const wd=WEATHER[w];
+      const lbl=max>0?`<span class="w-icon">${wd.icon}</span><span class="w-label">${wd.label}</span>`:'<span class="w-icon" style="opacity:.3">·</span>';
+      html+=`<div class="imap-cell w-${w}${cur}" title="${evs.map(e=>e.event).join(' / ')}">${lbl}</div>`;
+    }
+  }
+  map.innerHTML=html;
+  map.classList.remove('flash');void map.offsetWidth;map.classList.add('flash');
+}
+
+function renderEventCardHTML(ev,year,month,matchScore){
+  const whenL=`${year}年`,monL=`${month}月`;
+  let regTag='';
+  if(ev.prefectures!=='all'){
+    const regs=new Set();
+    ev.prefectures.forEach(p=>{const r=PREFECTURE_TO_REGION[p];if(r)regs.add(REGION_LABEL[r])});
+    const str=ev.prefectures.length<=4?ev.prefectures.join('・'):[...regs].join('・');
+    regTag=`<span class="tag region">${str}</span>`;
+  }
+  const subTag=ev.subgroup?`<span class="tag subgroup">${ev.subgroup}</span>`:'';
+  const trend=ev.trend?`<div class="card-trend">${ev.trend}</div>`:'';
+  const synergy=ev.synergy?`<div class="card-synergy">${ev.synergy}</div>`:'';
+  const tl=TYPE_LABEL[ev.type]||'';
+  let banners='';
+  if(ev.cardTypes&&ev.cardTypes.length){
+    const b=ev.cardTypes.map(c=>{const cd=CARD_DETAILS[c];return`<button class="banner-btn" data-card="${c}">${cd?cd.name:c}</button>`}).join('');
+    banners=`<div class="card-banners"><span class="card-banners-label">▶ 対応カード詳細</span>${b}</div>`;
+  }
+  const mb=(matchScore!==undefined&&matchScore>=80)?`<span class="match-badge">★高マッチ</span>`:'';
+  const ab=ev.alwaysOn?`<span class="alwayson-badge">常時開催</span>`:'';
+  const sb=ev.synergy?`<span class="synergy-badge">相乗効果</span>`:'';
+  const mc=(matchScore!==undefined&&matchScore>=80)?' match-strong':'';
+  return`<article class="card type-${ev.type}${mc}"><div class="card-stripe"></div><div class="card-body"><div class="card-header"><div><div><span class="card-type-badge">${tl}</span>${mb}${ab}${sb}</div><div class="card-headline">${ev.headline}<span class="unit">${ev.headlineUnit||''}</span></div></div><div class="card-when">${whenL}<strong>${monL}</strong></div></div><div class="card-retailer">${ev.name}</div><div class="card-event">${ev.event}</div><div class="card-detail">${ev.detail}</div>${trend}${synergy}<div class="card-tags"><span class="tag">${groupLabel(ev.group)}</span>${subTag}${regTag}</div>${banners}</div></article>`;
+}
+
+function expandEvents(events,f){
+  const today=new Date();
+  const cy=today.getFullYear(),cm=today.getMonth()+1;
+  const ex=[];
+  events.forEach(ev=>{
+    const dr=eventInDateRange(ev,f);
+    if(!dr)return;
+    if(dr===ev.months){
+      const nm=ev.months.map(m=>{const y=m>=cm?cy:cy+1;return{y,m}}).sort((a,b)=>(a.y-b.y)||(a.m-b.m));
+      ex.push({ev,year:nm[0].y,month:nm[0].m});
+    }else dr.forEach(d=>ex.push({ev,year:d.y,month:d.m}));
+  });
+  const seen=new Set();const out=[];
+  for(const i of ex){const k=i.ev.id+(f.from||f.to?`-${i.year}-${i.month}`:'');if(seen.has(k))continue;seen.add(k);out.push(i)}
+  return out;
+}
+
+function renderForecastCards(){
+  const f=getFilters();
+  const list=document.getElementById('forecastList');
+  const cnt=document.getElementById('cardCount');
+  const filt=currentEvents().filter(ev=>eventMatchesFilters(ev,f));
+  let d=expandEvents(filt,f);
+  const sk=f.sort;
+  const vd=VERSION_DATA[currentVersion];
+  const order={};vd.groupOrder.forEach((g,i)=>order[g]=i+1);order.all=99;
+  if(sk==='date_asc')d.sort((a,b)=>(a.year-b.year)||(a.month-b.month)||(b.ev.valueScore-a.ev.valueScore));
+  else if(sk==='date_desc')d.sort((a,b)=>(b.year-a.year)||(b.month-a.month)||(b.ev.valueScore-a.ev.valueScore));
+  else if(sk==='value_desc')d.sort((a,b)=>(b.ev.valueScore-a.ev.valueScore)||(a.year-b.year)||(a.month-b.month));
+  else if(sk==='value_asc')d.sort((a,b)=>(a.ev.valueScore-b.ev.valueScore)||(a.year-b.year)||(a.month-b.month));
+  else if(sk==='retailer')d.sort((a,b)=>((order[a.ev.group]||99)-(order[b.ev.group]||99))||(a.year-b.year)||(a.month-b.month));
+  cnt.textContent=d.length;
+  if(d.length===0){list.innerHTML='<div class="empty">該当する予報がありません。<br>条件を緩めて再度お試しください。</div>';return}
+  list.innerHTML=d.map(({ev,year,month})=>renderEventCardHTML(ev,year,month)).join('');
+  attachBannerClicks();
+}
+
+function attachBannerClicks(){
+  document.querySelectorAll('.banner-btn').forEach(b=>{
+    b.addEventListener('click',e=>{e.stopPropagation();openCardModal(b.dataset.card)});
+  });
+}
+
+function openCardModal(id){
+  const cd=CARD_DETAILS[id];if(!cd)return;
+  document.getElementById('modalTitle').textContent=cd.name;
+  document.getElementById('modalBody').innerHTML=`<div class="modal-section"><div class="modal-section-label">発行元</div><div class="modal-section-content">${cd.issuer}</div></div><div class="modal-section"><div class="modal-section-label">基本還元率</div><div class="modal-section-content"><strong>${cd.baseRate}</strong></div></div><div class="modal-section"><div class="modal-section-label">年会費</div><div class="modal-section-content">${cd.annualFee}</div></div><div class="modal-section"><div class="modal-section-label">主な利用先</div><div class="modal-section-content">${cd.primaryUse}</div></div><div class="modal-section"><div class="modal-section-label">主な特典</div><div class="modal-section-content"><ul>${cd.keyBenefits.map(b=>`<li>${b}</li>`).join('')}</ul></div></div><div class="modal-rate">${cd.notes}</div>`;
+  document.getElementById('modalBackdrop').classList.add('open');
+}
+function closeCardModal(){document.getElementById('modalBackdrop').classList.remove('open')}
+
+function renderAll(){renderIntensityMap();renderForecastCards()}
+
+/* ===== ウィザード ===== */
+const WIZARD_STEPS=6;
+let wizardState={currentStep:0,answers:{cards:[],region:null,types:[],retailers:[],priority:'balanced',timing:null}};
+
+function buildCardOptions(){
+  const c=document.querySelector('[data-key="cards"]');
+  const used=new Set(['none']);
+  /* 全版のカードを集める (ユーザは全版で同じカードを持っている前提) */
+  Object.values(VERSION_DATA).forEach(v=>v.events.forEach(ev=>(ev.cardTypes||[]).forEach(c2=>used.add(c2))));
+  const cards=Array.from(used).filter(c=>c==='none'||CARD_DETAILS[c]).map(c=>{
+    if(c==='none')return{val:'none',label:'特になし / 現金派',sub:'カードは持っていない'};
+    const cd=CARD_DETAILS[c];
+    return{val:c,label:cd.name,sub:cd.primaryUse};
+  });
+  c.innerHTML=cards.map(o=>`<button class="wizard-option" data-val="${o.val}"><span class="checkbox"></span><span class="opt-label">${o.label}<span class="opt-sub">${o.sub}</span></span></button>`).join('');
+}
+
+function buildWizardRetailerOptions(){
+  const c=document.querySelector('[data-key="retailers"]');
+  const opts=VERSION_DATA[currentVersion].wizardRetailers;
+  c.innerHTML=opts.map(o=>`<button class="wizard-option" data-val="${o.val}"><span class="checkbox"></span><span class="opt-label">${o.label}<span class="opt-sub">${o.sub}</span></span></button>`).join('');
+  /* 既存の選択をクリア */
+  wizardState.answers.retailers=[];
+}
+
+function setupWizardOptionClicks(){
+  document.querySelectorAll('.wizard-options').forEach(g=>{
+    const k=g.dataset.key;
+    const multi=g.dataset.multi==='true';
+    g.addEventListener('click',e=>{
+      const opt=e.target.closest('.wizard-option');if(!opt)return;
+      const v=opt.dataset.val;
+      if(multi){
+        const a=wizardState.answers[k];
+        const i=a.indexOf(v);
+        if(i>=0)a.splice(i,1);else a.push(v);
+        opt.classList.toggle('selected');
+      }else{
+        wizardState.answers[k]=v;
+        g.querySelectorAll('.wizard-option').forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+      }
+    });
+  });
+}
+
+function renderWizardProgress(){
+  const p=document.getElementById('wizardProgress');
+  let h='';
+  for(let i=0;i<WIZARD_STEPS;i++){
+    let c='wizard-step-dot';
+    if(i<wizardState.currentStep)c+=' complete';
+    else if(i===wizardState.currentStep)c+=' current';
+    h+=`<div class="${c}"></div>`;
+  }
+  p.innerHTML=h;
+  document.getElementById('wizardStepInfo').textContent=`STEP ${wizardState.currentStep+1} / ${WIZARD_STEPS}`;
+}
+
+function showWizardStep(n){
+  document.querySelectorAll('.wizard-step').forEach(s=>s.classList.remove('active'));
+  const t=document.querySelector(`.wizard-step[data-step="${n}"]`);if(t)t.classList.add('active');
+  wizardState.currentStep=n;
+  document.getElementById('wizardPrev').disabled=(n===0);
+  document.getElementById('wizardNext').textContent=(n===WIZARD_STEPS-1)?'結果を見る ▶':'次へ →';
+  renderWizardProgress();
+}
+
+function handleWizardNext(){
+  if(wizardState.currentStep<WIZARD_STEPS-1)showWizardStep(wizardState.currentStep+1);
+  else showRecommendations();
+}
+function handleWizardPrev(){if(wizardState.currentStep>0)showWizardStep(wizardState.currentStep-1)}
+
+function computeMatchScore(ev,ans){
+  const weights={
+    balanced:{cards:25,region:25,type:15,retailer:15,timing:10,value:10},
+    value:{cards:15,region:15,type:15,retailer:10,timing:10,value:35},
+    convenience:{cards:35,region:30,type:10,retailer:15,timing:5,value:5},
+    urgent:{cards:15,region:15,type:10,retailer:10,timing:40,value:10},
+  };
+  const w=weights[ans.priority]||weights.balanced;
+  let s=0;
+  const uc=ans.cards.filter(c=>c!=='none');
+  if(uc.length>0&&ev.cardTypes&&ev.cardTypes.length>0){
+    if(ev.cardTypes.some(c=>uc.includes(c)))s+=w.cards;
+  }else if(!ev.cardTypes||ev.cardTypes.length===0)s+=w.cards*0.5;
+  if(ans.region==='all'){if(ev.prefectures==='all')s+=w.region;else s+=w.region*0.4}
+  else if(ev.prefectures==='all')s+=w.region*0.8;
+  else{const ps=PREFECTURES[ans.region]||[];if(ev.prefectures.some(p=>ps.includes(p)))s+=w.region}
+  if(ans.types.length===0||ans.types.includes(ev.type))s+=w.type;
+  if(ans.retailers.length===0||ans.retailers.includes(ev.group)||ev.group==='all')s+=w.retailer;
+  const cm=new Date().getMonth()+1;
+  let h=99;
+  if(ans.timing==='now')h=1;else if(ans.timing==='soon')h=3;else if(ans.timing==='halfyear')h=6;else if(ans.timing==='anytime')h=12;
+  const next=ev.months.map(m=>m>=cm?m-cm:(12-cm)+m).sort((a,b)=>a-b)[0];
+  if(next<=h)s+=w.timing;else if(next<=h+3)s+=w.timing*0.5;
+  const vr=Math.min(1,(ev.valueScore||0)/80);s+=w.value*vr;
+  return Math.round(s);
+}
+
+function showRecommendations(){
+  document.getElementById('wizardPanel').style.display='none';
+  document.getElementById('recommendResults').style.display='block';
+  const ans=wizardState.answers;
+  const today=new Date();
+  let tf=null,tt=null;
+  const cy=today.getFullYear(),cm=today.getMonth()+1;
+  if(ans.timing==='now'){tf={y:cy,m:cm};tt={y:cy,m:cm}}
+  else if(ans.timing==='soon'){tf={y:cy,m:cm};const t=new Date(cy,cm+2,1);tt={y:t.getFullYear(),m:t.getMonth()+1}}
+  else if(ans.timing==='halfyear'){tf={y:cy,m:cm};const t=new Date(cy,cm+5,1);tt={y:t.getFullYear(),m:t.getMonth()+1}}
+  const f={from:tf,to:tt};
+  const all=expandEvents(currentEvents(),f);
+  let scored=all.map(i=>({...i,matchScore:computeMatchScore(i.ev,ans)}));
+  scored=scored.filter(s=>s.matchScore>=40);
+  const seen=new Set();
+  scored.sort((a,b)=>(a.year-b.year)||(a.month-b.month));
+  scored=scored.filter(s=>{if(seen.has(s.ev.id))return false;seen.add(s.ev.id);return true});
+  scored.sort((a,b)=>b.matchScore-a.matchScore||(a.year-b.year)||(a.month-b.month));
+
+  const h=document.getElementById('recommendHeader');
+  const cl=ans.cards.filter(c=>c!=='none').map(c=>CARD_DETAILS[c]?.name||c);
+  const cs=cl.length>0?cl.slice(0,3).join(' / ')+(cl.length>3?` 他${cl.length-3}枚`:''):'カード指定なし';
+  const rl=ans.region==='all'?'全国':REGION_LABEL[ans.region]||'指定なし';
+  const tl=ans.types.length>0?ans.types.map(t=>TYPE_LABEL[t]).join(' / '):'すべての施策';
+  const rtl=ans.retailers.length>0?ans.retailers.map(r=>groupLabel(r)).join(' / '):'すべての店舗';
+  const tlm={now:'今〜1ヶ月以内',soon:'2〜3ヶ月以内',halfyear:'半年以内',anytime:'時期を問わない'};
+  const tll=tlm[ans.timing]||'指定なし';
+  const plm={balanced:'バランス重視',value:'価格優先',convenience:'利便性優先',urgent:'即効性優先'};
+  const pll=plm[ans.priority]||'バランス重視';
+  h.innerHTML=`<h3>🎯 ${VERSION_DATA[currentVersion].label} あなたへのおすすめ ${scored.length} 件</h3><div class="summary"><strong>支払い:</strong> ${cs}<br><strong>地域:</strong> ${rl} / <strong>施策:</strong> ${tl}<br><strong>店舗:</strong> ${rtl}<br><strong>重視:</strong> ${pll} / <strong>時期:</strong> ${tll}</div><div class="recommend-actions"><button id="wizardRestart">← 条件を変える</button></div>`;
+  document.getElementById('wizardRestart').addEventListener('click',restartWizard);
+
+  renderRecommendList(scored);
+  document.getElementById('sortByRec').addEventListener('change',e=>{
+    const k=e.target.value;let s=scored.slice();
+    if(k==='match_desc')s.sort((a,b)=>b.matchScore-a.matchScore||(a.year-b.year)||(a.month-b.month));
+    else if(k==='date_asc')s.sort((a,b)=>(a.year-b.year)||(a.month-b.month)||b.matchScore-a.matchScore);
+    else if(k==='value_desc')s.sort((a,b)=>(b.ev.valueScore-a.ev.valueScore)||(a.year-b.year)||(a.month-b.month));
+    renderRecommendList(s);
+  });
+}
+
+function renderRecommendList(items){
+  const l=document.getElementById('recommendList');
+  if(items.length===0){l.innerHTML='<div class="empty">マッチする情報が見つかりませんでした。<br>条件を緩めて再度お試しください。</div>';return}
+  l.innerHTML=items.map(({ev,year,month,matchScore})=>renderEventCardHTML(ev,year,month,matchScore)).join('');
+  attachBannerClicks();
+}
+
+function restartWizard(){
+  wizardState={currentStep:0,answers:{cards:[],region:null,types:[],retailers:[],priority:'balanced',timing:null}};
+  document.querySelectorAll('.wizard-option').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('wizardPanel').style.display='block';
+  document.getElementById('recommendResults').style.display='none';
+  /* 版変更があれば再描画 */
+  buildWizardRetailerOptions();
+  setupWizardSubgroupClicks();
+  const dp=document.querySelector('.wizard-options[data-key="priority"] .wizard-option[data-val="balanced"]');
+  if(dp)dp.classList.add('selected');
+  wizardState.answers.priority='balanced';
+  showWizardStep(0);
+}
+
+function setupWizardSubgroupClicks(){
+  /* 動的に追加されたretailers/cardsのオプションにイベントを再付与 */
+  const groups=['cards','retailers'];
+  groups.forEach(k=>{
+    const g=document.querySelector(`.wizard-options[data-key="${k}"]`);
+    if(!g||g._hasClickHandler)return;
+    g._hasClickHandler=true;
+    g.addEventListener('click',e=>{
+      const opt=e.target.closest('.wizard-option');if(!opt)return;
+      const v=opt.dataset.val;
+      const a=wizardState.answers[k];
+      const i=a.indexOf(v);
+      if(i>=0)a.splice(i,1);else a.push(v);
+      opt.classList.toggle('selected');
+    });
+  });
+}
+
+/* ===== 版切替 ===== */
+function setupVersionTabs(){
+  document.querySelectorAll('.ver-tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      const v=t.dataset.version;
+      if(v===currentVersion)return;
+      currentVersion=v;
+      document.querySelectorAll('.ver-tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      updateRetailerOptions();
+      updateCardOptions();
+      buildWizardRetailerOptions();
+      setupWizardSubgroupClicks();
+      renderAll();
+      /* ウィザードがすでに表示済みなら結果も再計算 */
+      if(document.getElementById('recommendResults').style.display==='block'){restartWizard()}
+    });
+  });
+}
+
+function setupModeTabs(){
+  document.querySelectorAll('.mode-tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      const m=t.dataset.mode;
+      document.querySelectorAll('.mode-tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelectorAll('.mode-content').forEach(c=>c.classList.remove('active'));
+      document.getElementById('mode-'+m).classList.add('active');
+    });
+  });
+}
+
+function init(){
+  const today=new Date();
+  document.getElementById('todayStamp').textContent='本日 '+formatYM(today);
+  document.getElementById('issueNo').textContent=String(today.getFullYear()%1000)+String(today.getMonth()+1).padStart(2,'0');
+  updatePrefectureOptions();
+  updateRetailerOptions();
+  updateCardOptions();
+  const fe=document.getElementById('filterFrom'),te=document.getElementById('filterTo');
+  const fy=today.getFullYear(),fm=today.getMonth()+1;
+  const td=new Date(fy,fm+5,1);
+  fe.value=`${fy}-${String(fm).padStart(2,'0')}`;
+  te.value=`${td.getFullYear()}-${String(td.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('applyBtn').addEventListener('click',renderAll);
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    document.getElementById('filterRegion').value='all';
+    updatePrefectureOptions();
+    document.getElementById('filterType').value='all';
+    document.getElementById('filterRetailer').value='all';
+    document.getElementById('filterCard').value='all';
+    document.getElementById('sortBy').value='date_asc';
+    fe.value=`${fy}-${String(fm).padStart(2,'0')}`;
+    te.value=`${td.getFullYear()}-${String(td.getMonth()+1).padStart(2,'0')}`;
+    renderAll();
+  });
+  document.getElementById('filterRegion').addEventListener('change',()=>{updatePrefectureOptions();renderAll()});
+  ['filterPrefecture','filterType','filterRetailer','filterCard','filterFrom','filterTo','sortBy'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',renderAll);
+  });
+  document.getElementById('modalClose').addEventListener('click',closeCardModal);
+  document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCardModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCardModal()});
+  setupModeTabs();
+  setupVersionTabs();
+  buildCardOptions();
+  buildWizardRetailerOptions();
+  setupWizardOptionClicks();
+  setupWizardSubgroupClicks();
+  renderWizardProgress();
+  const dp=document.querySelector('.wizard-options[data-key="priority"] .wizard-option[data-val="balanced"]');
+  if(dp)dp.classList.add('selected');
+  document.getElementById('wizardNext').addEventListener('click',handleWizardNext);
+  document.getElementById('wizardPrev').addEventListener('click',handleWizardPrev);
+  renderAll();
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
