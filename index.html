@@ -50,6 +50,9 @@ header{border-top:3px double var(--ink);border-bottom:1px solid var(--ink);paddi
 .tagline-list{list-style:none;padding:12px 16px;margin-top:10px;background:rgba(255,255,255,.5);border-left:3px solid var(--gold);font-size:12px;line-height:1.9;color:var(--ink)}
 .tagline-list li{padding-left:0}
 .tagline-list li strong{color:var(--red-deep);margin-right:6px}
+.alert-notice{margin-top:12px;padding:12px 14px 12px 38px;background:rgba(195,58,46,.06);border:1px solid var(--red);border-left:4px solid var(--red);font-size:12px;line-height:1.7;color:var(--ink);position:relative;font-family:'Shippori Mincho',serif}
+.alert-notice-label{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red-deep);font-weight:700;letter-spacing:.08em;margin-bottom:4px;position:absolute;top:12px;left:14px}
+.alert-notice{padding-top:32px}
 .cos-type-filter{display:none;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:rgba(184,137,59,.08);border:1px solid var(--gold);flex-wrap:wrap}
 .cos-type-filter.visible{display:flex}
 .cos-type-filter-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.1em}
@@ -238,8 +241,12 @@ footer strong{color:var(--red)}
 <li><strong>🏬 通常版</strong>: 百貨店・SC・駅ビル・家電量販店・EC・カード会社独自販促を網羅</li>
 <li><strong>💄 コスメ版</strong>: @cosme・ドラッグストア (ウエル活含む)・百貨店コスメ・ホリデーコフレを横断</li>
 <li><strong>🛋️ 家具版</strong>: ニトリ・IKEA・大塚家具・マナベ等の決算/周年/新生活セール</li>
-<li><strong>🎸 楽器版</strong>: 島村・イシバシ・サウンドハウス等の決算/BFセール+SC連動相乗効果</li>
+<li><strong>🎸 楽器版</strong>: 島村楽器・イシバシ・サウンドハウス等の決算/BFセール+SC連動相乗効果</li>
 </ul>
+<div class="alert-notice">
+<span class="alert-notice-label">⚠️ ご利用上の注意</span>
+過去パターンから将来のお得情報を予測します。実際の期間や実施の有無は各企業の方針によりますので、あくまでも本アプリで表示させる結果は参考までにとどめていただき、掲載されている企業やSC内の店舗にお問い合わせ等なさらないようお願いいたします。
+</div>
 </div>
 </header>
 <div class="version-selector" id="versionSelector">
@@ -523,7 +530,7 @@ const INSTRUMENT_EVENTS=[
 {id:'in12',group:'inst_shop',subgroup:'イケベ楽器',name:'イケベ楽器 楽天市場店',event:'BLACK FRIDAY ポイント44.5倍',type:'points',headline:'44.5',headlineUnit:'倍',months:[11],valueScore:85,detail:'楽天市場のBLACK FRIDAYで楽器店出店分が最大44.5倍ポイント還元。',trend:'2023年BFで実績あり。楽天SPU・お買い物マラソン・5と0のつく日を重ねて最大倍率に。',synergy:'楽天カード+楽天プレミアム/ゴールド+お買い物マラソン買い回り+5/0の日エントリーで44.5倍に到達可能。実質40%以上の還元になる例も。',cardTypes:['rakuten','ikebe_club'],prefectures:'all'},
 {id:'in13',group:'inst_shop',subgroup:'山野楽器',name:'山野楽器',event:'ヤマノミュージックポイント',type:'points',headline:'1%',headlineUnit:'還元',months:[1,2,3,4,5,6,7,8,9,10,11,12],valueScore:30,alwaysOn:true,detail:'CD・DVD・Blu-ray・楽譜・書籍購入で1ポイント。100ptで100円のお買物券。',trend:'通年施策。',cardTypes:['yamano_point'],prefectures:'all'},
 {id:'in14',group:'inst_shop',subgroup:'横断',name:'楽器店各社',event:'新生活応援フェア',type:'discount',headline:'入門セット',headlineUnit:'特価',months:[2,3,4],valueScore:55,detail:'吹奏楽・新入学・新生活向けの入門セット価格・楽器レンタル割引。',trend:'2-4月の新生活シーズンに各社一斉開催。',cardTypes:[],prefectures:'all'},
-{id:'in15',group:'ec',subgroup:'楽天',name:'楽天市場 (楽器カテゴリ)',event:'楽天スーパーセール 楽器',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:70,detail:'年4回の楽天スーパーセール。島村・イケベ・イシバシ・クロサワ・ギタープラネット・BIG BOSS等の楽器店出店分が対象。',trend:'毎年3・6・9・12月開催。',cardTypes:['rakuten'],prefectures:'all'},
+{id:'in15',group:'ec',subgroup:'楽天',name:'楽天市場 (楽器カテゴリ)',event:'楽天スーパーセール 楽器',type:'points',headline:'最大10',headlineUnit:'倍',months:[3,6,9,12],valueScore:70,detail:'年4回の楽天スーパーセール。島村楽器・イケベ・イシバシ・クロサワ・ギタープラネット・BIG BOSS等の楽器店出店分が対象。',trend:'毎年3・6・9・12月開催。',cardTypes:['rakuten'],prefectures:'all'},
 {id:'in16',group:'ec',subgroup:'Amazon',name:'Amazon 楽器・オーディオ',event:'プライムデー・BF (楽器)',type:'discount',headline:'最大',headlineUnit:'値下げ',months:[7,11],valueScore:70,detail:'プライムデー (7月)・BF (11月) で楽器・オーディオ機器が値下げ。',trend:'2025年プライムデーは7/8-7/14、BFは11/21-12/1。',cardTypes:['amazon_card'],prefectures:'all'},
 ];
 
@@ -635,7 +642,7 @@ const VERSION_DATA = {
       {val:'ec',label:'EC (楽天・Amazon)'},
     ],
     wizardRetailers: [
-      {val:'inst_shop',label:'楽器店',sub:'島村・イシバシ・サウンドハウス等'},
+      {val:'inst_shop',label:'楽器店',sub:'島村楽器・イシバシ・サウンドハウス等'},
       {val:'ec',label:'EC',sub:'楽天楽器店・Amazon'},
     ]
   },
